@@ -4,8 +4,10 @@
   "description": "discord bot",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js",
-    "dev": "nodemon bot.js"
+    "dev": "tsx watch src/bot.ts",
+    "start": "node dist/bot.js",
+    "build": "tsup src/bot.ts --minify",
+    "prepare": "husky install"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +17,21 @@
     "nodemon": "^3.1.3"
   },
   "devDependencies": {
-    "eslint": "^8.56.0"
+    "@eslint/js": "^9.4.0",
+    "eslint": "^9.4.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.4.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.7",
+    "tsup": "^8.1.0",
+    "tsx": "^4.15.4",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.13.0"
+  },
+  "lint-staged": {
+    "*.{ts,js}": "eslint --cache --fix",
+    "*.{ts,js,css,md}": "prettier --write",
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }
