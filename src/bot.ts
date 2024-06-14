@@ -1,50 +1,66 @@
-import { Client, Events, GatewayIntentBits, Message } from "discord.js";
+import {
+  Client,
+  Events,
+  GatewayIntentBits,
+  Message,
+  TextChannel,
+} from "discord.js";
+
 import dotenv from "dotenv";
 dotenv.config();
-const { token } = process.env;
+const { token, welcomeChannel = "", botSpamChannel = "" } = process.env;
+
+import { commands, CommandType, rankCommand, isUnauthorized } from "./commands";
+import { recipes, RecipeType } from "./recipes";
+import { getAbv } from "./abvCommand";
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildPresences,
   ],
 });
 
+client.login(token);
 client.once(Events.ClientReady, (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-const commands = [
-  {
-    command: "!help",
-    response:
-      "# **Welcome to the Mead Bot!**\n\nIf you want a list of available commands, run **!list**\n\nIf you would like to change your rank, run **?rank (requested rank)**\nThis will add you to a private channel with your own little mead community.\n\nRun **!recipes** to see a list of common recipes, or **!recipes (recipe name)** to see an individual recipe.",
-  },
-  {
-    command: "!recipes",
-    response: "",
-  },
-];
-const rankCommand = "?rank ";
-
 client.on("messageCreate", (message: Message) => {
-  const msg = message.content;
-  const { member } = message;
-  const memberRoles = member?.roles.cache.filter((r) =>
-    r.name.toLowerCase().includes("mead")
-  );
-
+  // early return if the message is sent by the bot
   if (message.author.bot) {
     return;
   }
+
+  const msg = message.content;
+  const { member } = message;
+
+  // gets members current roles
+  const memberRoles = member?.roles.cache.filter((r) => {
+    return (
+      r.name.toLowerCase().includes("mead") ||
+      r.name.toLowerCase() === "beginner"
+    );
+  });
 
   if (msg.toLowerCase().startsWith(rankCommand)) {
     // requested role
     let rank = msg.substring(rankCommand.length);
 
+    // prevent from asigning privledged roles
+    if (isUnauthorized(rank)) {
+      message.channel.send(
+        `You are in this discord server, but we do not grant you the rank of ${rank}`
+      );
+      return;
+    }
+
     // looks for requested role in list
     const role = message.guild?.roles.cache.find((r) => {
+      // edge case coverage, if user enters '10' it assigns 100 Meads without this
       if (rank === "10") rank = "10 ";
       return (
         r.name.toLowerCase() === rank.toLowerCase() ||
@@ -55,13 +71,57 @@ client.on("messageCreate", (message: Message) => {
       message.channel.send(`The role ${rank} is not a valid role.`);
       return;
     }
-
+    // removes other mead community roles
     memberRoles?.forEach((r) => member?.roles.remove(r.id));
 
     member?.roles.add(role.id);
     message.channel
       .send(`You have been assigned to role "${role.name}"`)
       .catch((error) => console.error(error));
+    return;
+  }
+
+  if (msg.toLowerCase().startsWith("!recipes")) {
+    const [, recipe] = msg.split(" ");
+    const recipeString = recipe?.toLowerCase() || "";
+    if (recipe && recipeString in recipes) {
+      message.channel.send(recipes[recipeString as keyof RecipeType]);
+      return;
+    } else if (recipe) {
+      message.channel.send(
+        `The recipe ${recipe} is not a valid recipe command.`
+      );
+      return;
+    }
+  }
+
+  if (msg.toLowerCase().startsWith("!abv")) {
+    const [, first, second] = msg.split(" ");
+    const [OG, FG] = [Number(first), Number(second) || 0.996];
+    const areInvalid = () => {
+      return (
+        isNaN(OG) ||
+        isNaN(FG) ||
+        // checking for validity, ABV < 23%
+        OG < FG ||
+        OG > 1.22 ||
+        FG > 1.22 ||
+        OG - FG > 0.165
+      );
+    };
+
+    if (areInvalid()) {
+      message.channel.send(
+        "Please enter a valid number for OG and FG. Example: !abv 1.050 1.010"
+      );
+      return;
+    }
+
+    const [delle, ABV] = getAbv(OG, FG);
+    message.channel.send(
+      `An OG of ${OG} and an FG of ${FG} will make ${ABV}% ABV and ${delle} delle units.`
+    );
+    return;
   }
 
   for (const option of commands) {
@@ -72,7 +132,7 @@ client.on("messageCreate", (message: Message) => {
     }
   }
 
-  const getListOfCommands = (com: { command: string; response: string }[]) => {
+  const getListOfCommands = (com: CommandType[]) => {
     let commandList = [];
 
     commandList = com.map((command) => `${command.command}\n`);
@@ -88,4 +148,9 @@ client.on("messageCreate", (message: Message) => {
   }
 });
 
-client.login(token);
+client.on("guildMemberAdd", (member) => {
+  const channel = client.channels.cache.get(welcomeChannel) as TextChannel;
+  channel.send(
+    `Welcome to the MMM Discord Server <@${member.user.id}>!\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to recieve a rank and join your mini mead making community.\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`
+  );
+});
