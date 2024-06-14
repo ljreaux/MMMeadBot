@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/bot.ts",
     "start": "node dist/bot.js",
-    "build": "tsup src/bot.ts --minify",
+    "build": "tsup src/* --minify",
     "prepare": "husky install"
   },
   "author": "",
