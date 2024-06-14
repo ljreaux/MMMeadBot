@@ -29,7 +29,6 @@ const commands = [
 const rankCommand = "?rank ";
 
 client.on("messageCreate", (message: Message) => {
-  console.log("testing");
   const msg = message.content;
   const { member } = message;
   const memberRoles = member?.roles.cache.filter((r) =>
