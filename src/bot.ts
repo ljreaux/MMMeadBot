@@ -46,14 +46,15 @@ client.on("messageCreate", (message: Message) => {
         .has(PermissionsBitField.Flags.Administrator)
     )
       return;
-    const [, user] = msg.split(" ");
+    let [, user] = msg.split(" ");
+    user = user.substring(2, user.length - 2);
     if (!user) {
       message.channel.send("You need to specify a user to kick.");
       return;
     }
     console.log(user);
     const userToKick = message.guild?.members.cache.find(
-      (member) => member.user.tag === user
+      (member) => member.user.id === user
     );
     if (!userToKick) {
       message.channel.send("User not found.");
