@@ -47,7 +47,7 @@ client.on("messageCreate", (message: Message) => {
     )
       return;
     let [, user] = msg.split(" ");
-    user = user.substring(2, user.length - 2);
+    // user = user.substring(2, user.length - 2);
     if (!user) {
       message.channel.send("You need to specify a user to kick.");
       return;
