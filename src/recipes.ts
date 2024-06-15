@@ -20,7 +20,7 @@ export interface RecipeType {
   peppermintmead: string;
   mixedberrymead: string;
   rootbeermead: string;
-  TeaMead: string;
+  teamead: string;
   pinacolada: string;
   redpyment: string;
   meadmakingprocess: string;
@@ -54,7 +54,7 @@ export const recipes: RecipeType = {
   peppermintmead: "https://youtu.be/6T7BdYta4YQ",
   mixedberrymead: "https://youtu.be/0J-p54wh1tI",
   rootbeermead: "https://youtu.be/UGuJgqhMwxU",
-  TeaMead: "https://youtu.be/3Npbhc7Jp1k",
+  teamead: "https://youtu.be/3Npbhc7Jp1k",
   pinacolada: "https://youtu.be/INJ-bxrRCBE",
   redpyment: "https://youtu.be/jESTDN9eqhU",
   meadmakingprocess: " https://youtu.be/NQmhIQXnnNg",
