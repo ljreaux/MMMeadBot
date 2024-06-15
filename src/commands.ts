@@ -1,3 +1,5 @@
+import { recipes } from "./recipes";
+
 const ranks = [
   "Beginner",
   "10 Meads",
@@ -11,6 +13,10 @@ const ranks = [
 ];
 
 const rankString = ranks.reduce((acc, r) => {
+  return `${acc}\n${r}`;
+});
+
+const recipesString = Object.keys(recipes).reduce((acc, r) => {
   return `${acc}\n${r}`;
 });
 
@@ -36,7 +42,7 @@ export const commands: CommandType[] = [
   },
   {
     command: "!recipes",
-    response: "Here is the full list of recipes.",
+    response: `Here is the full list of recipes.\n${recipesString}`,
   },
   {
     command: "!abv",
