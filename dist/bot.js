@@ -30,6 +30,7 @@ Here are the Mead notes from the mead making 101-501 series.`},{command:"!honeyl
 `),a};if(n=="!list"){let o=`
 **Available Bot Commands**
 `,a=i(h),d=`${o}${a}`.replaceAll(",","");e.channel.send(d).catch(f=>console.error(f))}});u.on("guildMemberAdd",e=>{u.channels.cache.get(P).send(`Welcome to the MMM Discord Server <@${e.user.id}>!
+
  Please head over to <#${z}> and run **?rank (rank)** to recieve a rank and join your mini mead making community.
 
 Run **!recipes** to get a list of popular MMM recipes.
