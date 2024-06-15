@@ -29,7 +29,7 @@ export const commands: CommandType[] = [
   {
     command: "!help",
     response:
-      "# **Welcome to the Mead Bot!**\n\nIf you want a list of available commands, run **!list**\n\nIf you would like to change your rank, run **?rank (requested rank)**\nThis will add you to a private channel with your own little mead community.\n\nRun **!recipes** to see a list of common recipes, or **!recipes (recipe name)** to see an individual recipe.",
+      "# **Welcome to MMMeadBot!**\n\nIf you want a list of available commands, run **!list**\n\nIf you would like to change your rank, run **?rank (requested rank)**\nThis will add you to a private channel with your own little mead community.\n\nRun **!recipes** to see a list of common recipes, or **!recipes (recipe name)** to see an individual recipe.",
   },
   {
     command: "!listranks",

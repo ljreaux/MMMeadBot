@@ -13,7 +13,7 @@ const { token, welcomeChannel = "", botSpamChannel = "" } = process.env;
 import { commands, CommandType, rankCommand, isUnauthorized } from "./commands";
 import { recipes, RecipeType } from "./recipes";
 import { getAbv } from "./abvCommand";
-import { banUser, kickUser } from "./modCommands";
+import { kickOrBanUser } from "./modCommands";
 
 const client = new Client({
   intents: [
@@ -39,8 +39,8 @@ client.on("messageCreate", (message: Message) => {
   const msg = message.content;
   const { member } = message;
 
-  if (msg.includes("?kick")) return kickUser(message, msg);
-  if (msg.includes("?ban")) return banUser(message, msg);
+  if (msg.startsWith("?kick") || msg.startsWith("?ban"))
+    return kickOrBanUser(message, msg);
 
   // gets members current roles
   const memberRoles = member?.roles.cache.filter((r) => {
