@@ -53,9 +53,7 @@ client.on("messageCreate", (message: Message) => {
       return;
     }
     console.log(user);
-    const userToKick = message.guild?.members.cache.find(
-      (member) => member.user.id === user
-    );
+    const userToKick = message.guild?.members.cache.get(user);
     if (!userToKick) {
       message.channel.send("User not found.");
       return;
