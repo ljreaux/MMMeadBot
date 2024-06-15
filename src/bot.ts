@@ -40,20 +40,22 @@ client.on("messageCreate", (message: Message) => {
   const { member } = message;
 
   if (msg.includes("?kick")) {
+    console.log(message.mentions.users);
     if (
       !message.member
         ?.permissionsIn(message.channel.id)
         .has(PermissionsBitField.Flags.Administrator)
     )
       return;
-    let [, user] = msg.split(" ");
-    // user = user.substring(2, user.length - 2);
+    const [, user] = msg.split(" ");
     if (!user) {
       message.channel.send("You need to specify a user to kick.");
       return;
     }
     console.log(user);
-    const userToKick = message.guild?.members.cache.get(user);
+    const userToKick = message.guild?.members.cache.find(
+      (member) => member.user.tag === user
+    );
     if (!userToKick) {
       message.channel.send("User not found.");
       return;
