@@ -13,11 +13,11 @@ const ranks = [
 ];
 
 const rankString = ranks.reduce((acc, r) => {
-  return `${acc}\n${r}`;
+  return `${acc}\n- ${r}`;
 });
 
 const recipesString = Object.keys(recipes).reduce((acc, r) => {
-  return `${acc}\n${r}`;
+  return `${acc}\n- ${r}`;
 });
 
 export interface CommandType {

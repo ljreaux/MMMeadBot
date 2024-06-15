@@ -3,6 +3,7 @@ import {
   Events,
   GatewayIntentBits,
   Message,
+  PermissionsBitField,
   TextChannel,
 } from "discord.js";
 
@@ -38,6 +39,18 @@ client.on("messageCreate", (message: Message) => {
   const msg = message.content;
   const { member } = message;
 
+  if (msg.includes("?kick")) {
+    if (
+      !message.member
+        ?.permissionsIn(message.channel.id)
+        .has(PermissionsBitField.Flags.Administrator)
+    )
+      return;
+    const [, user] = msg.split(" ");
+    if (user) console.log(user);
+    return;
+  }
+
   // gets members current roles
   const memberRoles = member?.roles.cache.filter((r) => {
     return (
@@ -50,7 +63,7 @@ client.on("messageCreate", (message: Message) => {
     // requested role
     let rank = msg.substring(rankCommand.length);
 
-    // prevent from asigning privledged roles
+    // prevent from assigning privileged roles
     if (isUnauthorized(rank)) {
       message.channel.send(
         `You are in this discord server, but we do not grant you the rank of ${rank}`
