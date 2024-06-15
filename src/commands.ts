@@ -42,7 +42,7 @@ export const commands: CommandType[] = [
   },
   {
     command: "!recipes",
-    response: `Here is the full list of recipes.\n${recipesString}\n\nRun !recipes (recipe name) to get an individual recipe`,
+    response: `Here is the full list of recipes.\n- ${recipesString}\n\nRun !recipes (recipe name) to get an individual recipe`,
   },
   {
     command: "!abv",
