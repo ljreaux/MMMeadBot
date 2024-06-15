@@ -1,4 +1,4 @@
-"use strict";var a=Object.defineProperty;var c=Object.getOwnPropertyDescriptor;var i=Object.getOwnPropertyNames;var m=Object.prototype.hasOwnProperty;var d=(o,e)=>{for(var n in e)a(o,n,{get:e[n],enumerable:!0})},p=(o,e,n,s)=>{if(e&&typeof e=="object"||typeof e=="function")for(let t of i(e))!m.call(o,t)&&t!==n&&a(o,t,{get:()=>e[t],enumerable:!(s=c(e,t))||s.enumerable});return o};var h=o=>p(a({},"__esModule",{value:!0}),o);var f={};d(f,{commands:()=>y,isUnauthorized:()=>b,rankCommand:()=>g});module.exports=h(f);var r={mead:"This is a mead recipe",test:"this is a test of updating recipes"};var l=["Beginner","10 Meads","20 Meads","25 Meads","30 Meads","40 Meads","50 Meads","75 Meads","100 Meads"],u=l.reduce((o,e)=>`${o}
+"use strict";var a=Object.defineProperty;var i=Object.getOwnPropertyDescriptor;var c=Object.getOwnPropertyNames;var m=Object.prototype.hasOwnProperty;var d=(o,e)=>{for(var n in e)a(o,n,{get:e[n],enumerable:!0})},p=(o,e,n,s)=>{if(e&&typeof e=="object"||typeof e=="function")for(let t of c(e))!m.call(o,t)&&t!==n&&a(o,t,{get:()=>e[t],enumerable:!(s=i(e,t))||s.enumerable});return o};var h=o=>p(a({},"__esModule",{value:!0}),o);var f={};d(f,{commands:()=>y,isUnauthorized:()=>b,rankCommand:()=>g});module.exports=h(f);var r={mead:"This is a mead recipe",test:"this is a test of updating recipes"};var l=["Beginner","10 Meads","20 Meads","25 Meads","30 Meads","40 Meads","50 Meads","75 Meads","100 Meads"],u=l.reduce((o,e)=>`${o}
 ${e}`),w=Object.keys(r).reduce((o,e)=>`${o}
 ${e}`),y=[{command:"!help",response:`# **Welcome to the Mead Bot!**
 
@@ -10,7 +10,9 @@ This will add you to a private channel with your own little mead community.
 Run **!recipes** to see a list of common recipes, or **!recipes (recipe name)** to see an individual recipe.`},{command:"!listranks",response:`Here is a list of available ranks: 
 
 ${u}`},{command:"?rank",response:"The rank command allows you to change your current rank based on the number of meads you have completed."},{command:"!recipes",response:`Here is the full list of recipes.
-${w}`},{command:"!abv",response:""},{command:"!meadtools",response:`Calculator: https://meadtools.com/
+${w}
+
+Run !recipes (recipe name) to get an individual recipe`},{command:"!abv",response:""},{command:"!meadtools",response:`Calculator: https://meadtools.com/
 Video walkthrough: https://youtube.com/playlist?list=PLK2MubdaaOrUaQnjvfsJnqJv3agRmd4oS&si=ZV0NCqxCioRmg9mq`},{command:"!meadnotes",response:`https://docs.google.com/document/d/1O0ebgOewuK0a1JKEsmlco3QJ0bp5B0tgGnbGm5S8syU/edit?usp=sharing
 Here are the Mead notes from the mead making 101-501 series.`},{command:"!honeylist",response:`Here is a list of honey vendors from our wonderful moderator Texas Longhouse Mead.
 - https://www.gardnerbees.buzz/shop
