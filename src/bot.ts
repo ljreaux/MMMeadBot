@@ -52,16 +52,14 @@ client.on("messageCreate", (message: Message) => {
       message.channel.send("You need to specify a user to kick.");
       return;
     }
-    console.log(user);
-    const userToKick = message.mentions.users.find(
-      (member) => member.id === user
-    );
+    const userToKick = message.mentions.users;
     if (!userToKick) {
       message.channel.send("User not found.");
       return;
     }
-    message.guild?.members.kick(userToKick);
-    message.channel.send(`${userToKick.tag} has been kicked.`);
+    console.log(message.mentions.users);
+    // message.guild?.members.kick(userToKick);
+    // message.channel.send(`${userToKick.tag} has been kicked.`);
     return;
   }
 
