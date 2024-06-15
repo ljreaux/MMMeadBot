@@ -155,6 +155,6 @@ client.on("messageCreate", (message: Message) => {
 client.on("guildMemberAdd", (member) => {
   const channel = client.channels.cache.get(welcomeChannel) as TextChannel;
   channel.send(
-    `Welcome to the MMM Discord Server <@${member.user.id}>!\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to recieve a rank and join your mini mead making community.\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`
+    `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to recieve a rank and join your mini mead making community.\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`
   );
 });
