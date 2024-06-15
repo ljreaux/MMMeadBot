@@ -3,7 +3,6 @@ import {
   Events,
   GatewayIntentBits,
   Message,
-  PermissionsBitField,
   TextChannel,
 } from "discord.js";
 
@@ -14,6 +13,7 @@ const { token, welcomeChannel = "", botSpamChannel = "" } = process.env;
 import { commands, CommandType, rankCommand, isUnauthorized } from "./commands";
 import { recipes, RecipeType } from "./recipes";
 import { getAbv } from "./abvCommand";
+import { banUser, kickUser } from "./modCommands";
 
 const client = new Client({
   intents: [
@@ -39,29 +39,8 @@ client.on("messageCreate", (message: Message) => {
   const msg = message.content;
   const { member } = message;
 
-  if (msg.includes("?kick")) {
-    if (
-      !message.member
-        ?.permissionsIn(message.channel.id)
-        .has(PermissionsBitField.Flags.Administrator)
-    )
-      return;
-    let [, user] = msg.split(" ");
-    user = user.substring(2, user.length - 2);
-    if (!user) {
-      message.channel.send("You need to specify a user to kick.");
-      return;
-    }
-    const userToKick = message.mentions.users.first();
-    if (!userToKick) {
-      message.channel.send("User not found.");
-      return;
-    }
-
-    message.guild?.members.kick(userToKick);
-    message.channel.send(`${userToKick.tag} has been kicked.`);
-    return;
-  }
+  if (msg.includes("?kick")) return kickUser(message, msg);
+  if (msg.includes("?ban")) return banUser(message, msg);
 
   // gets members current roles
   const memberRoles = member?.roles.cache.filter((r) => {
