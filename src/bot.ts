@@ -47,7 +47,19 @@ client.on("messageCreate", (message: Message) => {
     )
       return;
     const [, user] = msg.split(" ");
-    if (user) console.log(user);
+    if (!user) {
+      message.channel.send("You need to specify a user to kick.");
+      return;
+    }
+    const userToKick = message.guild?.members.cache.find(
+      (member) => member.user.tag === user
+    );
+    if (!userToKick) {
+      message.channel.send("User not found.");
+      return;
+    }
+    message.guild?.members.kick(userToKick);
+    message.channel.send(`${userToKick.user.tag} has been kicked.`);
     return;
   }
 
