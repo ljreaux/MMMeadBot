@@ -51,6 +51,7 @@ client.on("messageCreate", (message: Message) => {
       message.channel.send("You need to specify a user to kick.");
       return;
     }
+    console.log(user);
     const userToKick = message.guild?.members.cache.find(
       (member) => member.user.tag === user
     );
