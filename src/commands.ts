@@ -46,6 +46,7 @@ export const isUnauthorized = (rank: string) => {
     "YT Bot",
     "UMM2024",
     "UMM 2024 Purgatory Member",
+    "Commercial"
   ];
   noRoles.forEach((item) => {
     if (
