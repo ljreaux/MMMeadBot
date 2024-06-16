@@ -8,8 +8,7 @@ If you would like to change your rank, run **?rank (requested rank)**
 This will add you to a private channel with your own little mead community.
 
 Run **!recipes** to see a list of common recipes, or **!recipes (recipe name)** to see an individual recipe.`},{command:"!listranks",response:`Here is a list of available ranks: 
-
-${x}`},{command:"?rank",response:"The rank command allows you to change your current rank based on the number of meads you have completed."},{command:"!recipes",response:`Here is the full list of recipes.
+- ${x}`},{command:"?rank",response:"The rank command allows you to change your current rank based on the number of meads you have completed."},{command:"!recipes",response:`Here is the full list of recipes.
 - ${O}
 
 Run !recipes (recipe name) to get an individual recipe`},{command:"!abv",response:""},{command:"!meadtools",response:`Calculator: https://meadtools.com/

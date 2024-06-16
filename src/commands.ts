@@ -33,7 +33,7 @@ export const commands: CommandType[] = [
   },
   {
     command: "!listranks",
-    response: `Here is a list of available ranks: \n\n${rankString}`,
+    response: `Here is a list of available ranks: \n- ${rankString}`,
   },
   {
     command: "?rank",
