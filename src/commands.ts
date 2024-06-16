@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
-import { recipes } from "./recipes";
 import Command from "./models/commands";
+import { getRecipes } from "./recipes";
 
 const ranks = [
   "Beginner",
@@ -17,10 +17,6 @@ const ranks = [
 const rankString = ranks.reduce((acc, r) => {
   return `${acc}\n- ${r}`;
 });
-
-const recipesString = recipes
-  .map((recipe) => recipe.name)
-  .reduce((acc, r) => `${acc}\n- ${r}`);
 
 export interface CommandType {
   command: string;
@@ -63,9 +59,19 @@ export const isUnauthorized = (rank: string) => {
 };
 
 export const handleCommands = async (msg: string, message: Message) => {
+  const recipes = await getRecipes();
   const commands = await getCommands();
-  for (const option of commands) {
-    if (option.command === msg || msg.includes(option.command)) {
+
+  const recipesString = recipes
+    .map((recipe) => recipe.name)
+    .reduce((acc, r) => `${acc}\n- ${r}`);
+
+  for (let option of commands) {
+    if (msg.includes("!recipes ")) return;
+    if (option.command === msg || msg.startsWith(option.command)) {
+      if (msg.toLowerCase().startsWith("!listranks"))
+        option.response += ` \n- ${rankString}`;
+      if (msg === "!recipes") option.response += ` \n- ${recipesString}`;
       message.channel
         .send(option.response)
         .catch((error) => console.error(error));

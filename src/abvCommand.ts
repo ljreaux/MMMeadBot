@@ -40,7 +40,9 @@ export const handleAbvCommands = (msg: string, message: Message) => {
 
   const [delle, ABV] = getAbv(OG, FG);
   message.channel.send(
-    `An OG of ${OG} and an FG of ${FG} will make ${ABV}% ABV and ${delle} delle units.`
+    `An OG of ${OG.toFixed(3)} and an FG of ${FG.toFixed(
+      3
+    )} will make ${ABV}% ABV and ${delle} delle units.`
   );
   return;
 };
