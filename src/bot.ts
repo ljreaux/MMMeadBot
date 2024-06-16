@@ -12,6 +12,7 @@ const { token, welcomeChannel = "", botSpamChannel = "" } = process.env;
 
 import { rankCommand, handleCommands } from "./commands";
 import { handleRecipeCommands } from "./recipes";
+import { handleAbvCommands } from "./abvCommand";
 import { kickOrBanUser } from "./modCommands";
 import { handleRoleCommands } from "./roles";
 
@@ -72,7 +73,6 @@ server.use(cors());
 
 import bodyParser from "body-parser";
 import dbConnect from "./lib/db";
-import { handleAbvCommands } from "./abvCommand";
 server.use(bodyParser.json({ limit: "50mb" }));
 
 server.use("/", router);
