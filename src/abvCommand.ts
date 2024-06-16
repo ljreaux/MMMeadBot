@@ -1,3 +1,5 @@
+import { Message } from "discord.js";
+
 const toBrix = (value: number) => {
   return -668.962 + 1262.45 * value - 776.43 * value ** 2 + 182.94 * value ** 3;
 };
@@ -12,4 +14,33 @@ export const getAbv = (OG: number, FG: number) => {
 
   const delle = Math.round(toBrix(FG) + 4.5 * ABV);
   return [delle, ABV];
+};
+
+export const handleAbvCommands = (msg: string, message: Message) => {
+  const [, first, second] = msg.split(" ");
+  const [OG, FG] = [Number(first), Number(second) || 0.996];
+  const areInvalid = () => {
+    return (
+      isNaN(OG) ||
+      isNaN(FG) ||
+      // checking for validity, ABV < 23%
+      OG < FG ||
+      OG > 1.22 ||
+      FG > 1.22 ||
+      OG - FG > 0.165
+    );
+  };
+
+  if (areInvalid()) {
+    message.channel.send(
+      "Please enter a valid number for OG and FG. Example: !abv 1.050 1.010"
+    );
+    return;
+  }
+
+  const [delle, ABV] = getAbv(OG, FG);
+  message.channel.send(
+    `An OG of ${OG} and an FG of ${FG} will make ${ABV}% ABV and ${delle} delle units.`
+  );
+  return;
 };

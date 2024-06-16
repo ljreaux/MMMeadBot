@@ -10,10 +10,10 @@ import dotenv from "dotenv";
 dotenv.config();
 const { token, welcomeChannel = "", botSpamChannel = "" } = process.env;
 
-import { commands, CommandType, rankCommand, isUnauthorized } from "./commands";
-import { recipes, RecipeType } from "./recipes";
-import { getAbv } from "./abvCommand";
+import { rankCommand, handleCommands } from "./commands";
+import { handleRecipeCommands } from "./recipes";
 import { kickOrBanUser } from "./modCommands";
+import { handleRoleCommands } from "./roles";
 
 const client = new Client({
   intents: [
@@ -42,114 +42,16 @@ client.on("messageCreate", (message: Message) => {
   if (msg.startsWith("?kick") || msg.startsWith("?ban"))
     return kickOrBanUser(message, msg);
 
-  // gets members current roles
-  const memberRoles = member?.roles.cache.filter((r) => {
-    return (
-      r.name.toLowerCase().includes("mead") ||
-      r.name.toLowerCase() === "beginner"
-    );
-  });
+  if (msg.toLowerCase().startsWith(rankCommand))
+    return handleRoleCommands(msg, message, member);
 
-  if (msg.toLowerCase().startsWith(rankCommand)) {
-    // requested role
-    let rank = msg.substring(rankCommand.length);
+  if (msg.toLowerCase().startsWith("!recipes"))
+    return handleRecipeCommands(msg, message);
 
-    // prevent from assigning privileged roles
-    if (isUnauthorized(rank)) {
-      message.channel.send(
-        `You are in this discord server, but we do not grant you the rank of ${rank}`
-      );
-      return;
-    }
+  if (msg.toLowerCase().startsWith("!abv"))
+    return handleRecipeCommands(msg, message);
 
-    // looks for requested role in list
-    const role = message.guild?.roles.cache.find((r) => {
-      // edge case coverage, if user enters '10' it assigns 100 Meads without this
-      if (rank === "10") rank = "10 ";
-      return (
-        r.name.toLowerCase() === rank.toLowerCase() ||
-        r.name.toLowerCase().includes(rank.toLowerCase())
-      );
-    });
-    if (!role) {
-      message.channel.send(`The role ${rank} is not a valid role.`);
-      return;
-    }
-    // removes other mead community roles
-    memberRoles?.forEach((r) => member?.roles.remove(r.id));
-
-    member?.roles.add(role.id);
-    message.channel
-      .send(`You have been assigned to role "${role.name}"`)
-      .catch((error) => console.error(error));
-    return;
-  }
-
-  if (msg.toLowerCase().startsWith("!recipes")) {
-    const [, recipe] = msg.split(" ");
-    const recipeString = recipe?.toLowerCase() || "";
-    if (recipe && recipeString in recipes) {
-      message.channel.send(recipes[recipeString as keyof RecipeType]);
-      return;
-    } else if (recipe) {
-      message.channel.send(
-        `The recipe ${recipe} is not a valid recipe command.`
-      );
-      return;
-    }
-  }
-
-  if (msg.toLowerCase().startsWith("!abv")) {
-    const [, first, second] = msg.split(" ");
-    const [OG, FG] = [Number(first), Number(second) || 0.996];
-    const areInvalid = () => {
-      return (
-        isNaN(OG) ||
-        isNaN(FG) ||
-        // checking for validity, ABV < 23%
-        OG < FG ||
-        OG > 1.22 ||
-        FG > 1.22 ||
-        OG - FG > 0.165
-      );
-    };
-
-    if (areInvalid()) {
-      message.channel.send(
-        "Please enter a valid number for OG and FG. Example: !abv 1.050 1.010"
-      );
-      return;
-    }
-
-    const [delle, ABV] = getAbv(OG, FG);
-    message.channel.send(
-      `An OG of ${OG} and an FG of ${FG} will make ${ABV}% ABV and ${delle} delle units.`
-    );
-    return;
-  }
-
-  for (const option of commands) {
-    if (option.command === msg || msg.includes(option.command)) {
-      message.channel
-        .send(option.response)
-        .catch((error) => console.error(error));
-    }
-  }
-
-  const getListOfCommands = (com: CommandType[]) => {
-    let commandList = [];
-
-    commandList = com.map((command) => `${command.command}\n`);
-
-    return commandList;
-  };
-  if (msg == "!list") {
-    const commandListHeader = "\n**Available Bot Commands**\n";
-    const commandList = getListOfCommands(commands);
-    const formattedList = `${commandListHeader}${commandList}`;
-    const patched = formattedList.replaceAll(",", "");
-    message.channel.send(patched).catch((error) => console.error(error));
-  }
+  return handleCommands(msg, message);
 });
 
 client.on("guildMemberAdd", (member) => {
@@ -157,4 +59,46 @@ client.on("guildMemberAdd", (member) => {
   channel.send(
     `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to recieve a rank and join your mini mead making community.\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`
   );
+});
+
+// express server
+import express, { Express, Request, Response } from "express";
+import cors from "cors";
+
+const router = express.Router();
+
+const { PORT = 8080 } = process.env;
+const server: Express = express();
+
+server.use(cors());
+
+import bodyParser from "body-parser";
+import dbConnect from "./lib/db";
+server.use(bodyParser.json({ limit: "50mb" }));
+
+server.use("/", router);
+
+server.listen(PORT, async () => {
+  try {
+    await dbConnect();
+    console.log(`Server running on port ${PORT}`);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.get("/", (req: Request, res: Response) => {
+  try {
+    res.send({ message: "Server running" });
+  } catch (error) {
+    res.send({ message: "An error occurred" });
+  }
+});
+
+router.post("", (req: Request, res: Response) => {
+  try {
+    res.send({ message: "Command List has been updated." });
+  } catch (error) {
+    res.send({ message: "An error occurred" });
+  }
 });
