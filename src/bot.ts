@@ -38,18 +38,16 @@ client.on("messageCreate", (message: Message) => {
 
   const msg = message.content;
   const { member } = message;
+  const msgEquals = (param: string) => msg.toLowerCase().startsWith(param);
 
-  if (msg.startsWith("?kick") || msg.startsWith("?ban"))
+  if (msgEquals("?kick") || msgEquals("?ban"))
     return kickOrBanUser(message, msg);
 
-  if (msg.toLowerCase().startsWith(rankCommand))
-    return handleRoleCommands(msg, message, member);
+  if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);
 
-  if (msg.toLowerCase().startsWith("!recipes"))
-    return handleRecipeCommands(msg, message);
+  if (msgEquals("!recipes")) return handleRecipeCommands(msg, message);
 
-  if (msg.toLowerCase().startsWith("!abv"))
-    return handleRecipeCommands(msg, message);
+  if (msgEquals("!abv")) return handleAbvCommands(msg, message);
 
   return handleCommands(msg, message);
 });
@@ -74,6 +72,7 @@ server.use(cors());
 
 import bodyParser from "body-parser";
 import dbConnect from "./lib/db";
+import { handleAbvCommands } from "./abvCommand";
 server.use(bodyParser.json({ limit: "50mb" }));
 
 server.use("/", router);
