@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "commonjs",
+    "module": "Preserve",
     "rootDir": "./src",
     "outDir": "./dist",
     "removeComments": true,
