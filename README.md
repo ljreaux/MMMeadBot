@@ -50,8 +50,7 @@ Replace `<your-discord-bot-token>`, `<your-discord-client-id>`, `<your-discord-g
     ```bash
     npm start
     # or
-    yarn start
-    ```
+    yarn start```
 ### Usage
 - **Commands:** Use !list to trigger a command to get a list of available commands.
 - **Role Assignment:** The bot can automatically assign roles based on predefined commands.
