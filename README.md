@@ -36,22 +36,22 @@ Ensure you have the following installed on your development machine:
 ### Configuration
 1. Create a `.env` file in the root of the project and add the following environment variables:
 
-  ```bash
-  token=<your-discord-bot-token>
-  clientId=<your-discord-client-id>
-  guildId=<your-discord-guild-id>
-  welcomeChannel=<your-welcome-channel-id>
-  botSpamChannel=<your-bot-spam-channel-id>
-  MONGO_URI=<your-mongodb-connection-string>
-  ```
+     ```dotenv
+     token=<your-discord-bot-token>
+     clientId=<your-discord-client-id>
+     guildId=<your-discord-guild-id>
+     welcomeChannel=<your-welcome-channel-id>
+     botSpamChannel=<your-bot-spam-channel-id>
+     MONGO_URI=<your-mongodb-connection-string>
+     ```
 Replace `<your-discord-bot-token>`, `<your-discord-client-id>`, `<your-discord-guild-id>`, `<your-welcome-channel-id>`, `<your-bot-spam-channel-id>`, and `<your-mongodb-connection-string>` with your actual Discord bot token, Discord client ID, Discord guild ID, IDs for welcome channel and bot spam channel, and MongoDB connection string.
 
 ### Running the Bot
-  ```
-  npm start
-  # or
-  yarn start
-  ```
+     ```bash
+     npm start
+     # or
+     yarn start
+     ```
 ### Usage
 - **Commands:** Use !list to trigger a command to get a list of available commands.
 - **Role Assignment:** The bot can automatically assign roles based on predefined commands.
