@@ -47,6 +47,7 @@ Ensure you have the following installed on your development machine:
 Replace `<your-discord-bot-token>`, `<your-discord-client-id>`, `<your-discord-guild-id>`, `<your-welcome-channel-id>`, `<your-bot-spam-channel-id>`, and `<your-mongodb-connection-string>` with your actual Discord bot token, Discord client ID, Discord guild ID, IDs for welcome channel and bot spam channel, and MongoDB connection string.
 
 ### Running the Bot
+- Run the following script to start the bot.
     ```bash
     npm start
     # or
