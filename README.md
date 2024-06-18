@@ -59,9 +59,9 @@ Replace `<your-discord-bot-token>`, `<your-discord-client-id>`, `<your-discord-g
 - **Welcome Message:** The bot sends a welcome message whenever a new member joins the server.
 ### Contributing
 1. Fork the repository.
-2. Create a new branch: git checkout -b my-feature-branch
-3. Make your changes and commit them: git commit -m 'Add some feature'
-4. Push to the branch: git push origin my-feature-branch
+2. Create a new branch: `git checkout -b my-feature-branch`
+3. Make your changes and commit them: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin my-feature-branch`
 5. Submit a pull request.
 ### License
 This project is licensed under the MIT License.
