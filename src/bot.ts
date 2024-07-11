@@ -8,7 +8,12 @@ import {
 
 import dotenv from "dotenv";
 dotenv.config();
-const { token, welcomeChannel = "", botSpamChannel = "" } = process.env;
+const {
+  token,
+  welcomeChannel = "",
+  botSpamChannel = "",
+  generalChannel = "",
+} = process.env;
 
 import dbConnect from "./lib/db";
 import { rankCommand, handleCommands } from "./commands";
@@ -58,6 +63,6 @@ client.on("messageCreate", (message: Message) => {
 client.on("guildMemberAdd", (member) => {
   const channel = client.channels.cache.get(welcomeChannel) as TextChannel;
   channel.send(
-    `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to recieve a rank and join your mini mead making community.\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`
+    `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to receive a rank and join your mini mead making community.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`
   );
 });
