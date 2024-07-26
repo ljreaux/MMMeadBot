@@ -30,7 +30,7 @@ export const handleRoleCommands = (
     if (rank === "10") rank = "10 ";
     return (
       r.name.toLowerCase() === rank.toLowerCase() ||
-      r.name.toLowerCase().includes(rank.toLowerCase())
+      r.name.toLowerCase().startsWith(rank.toLowerCase())
     );
   });
   if (!role) {
