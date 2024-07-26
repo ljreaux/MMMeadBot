@@ -27,10 +27,11 @@ export const handleRoleCommands = (
   // looks for requested role in list
   const role = message.guild?.roles.cache.find((r) => {
     // edge case coverage, if user enters '10' it assigns 100 Meads without this
+    const [rankNum] = rank.split(' ')
     if (rank === "10") rank = "10 ";
     return (
       r.name.toLowerCase() === rank.toLowerCase() ||
-      r.name.toLowerCase().startsWith(rank.toLowerCase())
+      r.name.toLowerCase() == rankNum
     );
   });
   if (!role) {
