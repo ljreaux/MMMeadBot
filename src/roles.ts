@@ -16,7 +16,7 @@ export const handleRoleCommands = (
   // requested role
   let rank = msg.substring(rankCommand.length);
 
-  if (rank.toLowerCase().includes('every')) {
+  if (rank.toLowerCase().includes('every') || rank.toLowerCase().includes("@")) {
     message.channel.send(
       `Nice try. No ping for you.`
     );
