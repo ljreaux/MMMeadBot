@@ -29,6 +29,10 @@ export const rankCommand = "?rank ";
 export const isUnauthorized = (rank: string) => {
   let unauthorized = false;
   const noRoles = [
+    "@everyone", 
+    "Everyone",
+    "@Everyone",
+    "everyone",
     "Administrator",
     "Moderator",
     "Mazer of the Week",
