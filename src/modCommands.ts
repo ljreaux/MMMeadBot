@@ -1,14 +1,12 @@
-import { Message, PermissionsBitField } from "discord.js";
+import { Message, PermissionsBitField, TextChannel } from "discord.js";
+
+const minutes = 15
+
 export const kickOrBanUser = (message: Message, msg: string) => {
   const kickOrBan = msg.includes("kick") ? "kick" : "ban";
   if (
     !(
-      message.member
-        ?.permissionsIn(message.channel.id)
-        .has(PermissionsBitField.Flags.Administrator) ||
-      message.member
-        ?.permissionsIn(message.channel.id)
-        .has(PermissionsBitField.Flags.ModerateMembers)
+      isAdmin(message)
     )
   ) {
     message.channel.send("Nice try, but you don't have the power");
@@ -33,3 +31,33 @@ export const kickOrBanUser = (message: Message, msg: string) => {
   message.channel.send(`${userToKick.tag} has been ${kickOrBan}ed.`);
   return;
 };
+
+
+const sketchyPhrases = [
+  "@everyone",
+  "@here",
+]
+
+const isAdmin = (message: Message) => {
+  return message.member
+    ?.permissionsIn(message.channel.id)
+    .has(PermissionsBitField.Flags.Administrator) ||
+    message.member
+      ?.permissionsIn(message.channel.id)
+      .has(PermissionsBitField.Flags.ModerateMembers)
+}
+
+export const autoMod = (message: Message, channel: TextChannel) => {
+  const msg = message.content;
+  const { member } = message;
+  sketchyPhrases.forEach(phrase => {
+    if (msg.includes(phrase) && !isAdmin(message)) {
+      member?.timeout(minutes * 60 * 1000);
+      channel.send(`
+    @everyone
+    User ${member?.user} has been flagged for suspicious activity. They have been timed out for 5min. Suspicious content can be viewed here ${message.url}
+    `)
+    }
+  })
+
+}

@@ -13,13 +13,14 @@ const {
   welcomeChannel = "",
   botSpamChannel = "",
   generalChannel = "",
+  adminChannel = ""
 } = process.env;
 
 import dbConnect from "./lib/db";
 import { rankCommand, handleCommands } from "./commands";
 import { handleRecipeCommands } from "./recipes";
 import { handleAbvCommands } from "./abvCommand";
-import { kickOrBanUser } from "./modCommands";
+import { autoMod, kickOrBanUser } from "./modCommands";
 import { handleRoleCommands } from "./roles";
 
 const client = new Client({
@@ -37,6 +38,7 @@ client.once(Events.ClientReady, async (readyClient) => {
   await dbConnect();
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
+const adminTextChannel = client.channels.cache.get(adminChannel) as TextChannel;
 
 client.on("messageCreate", (message: Message) => {
   // early return if the message is sent by the bot
@@ -47,6 +49,8 @@ client.on("messageCreate", (message: Message) => {
   const msg = message.content;
   const { member } = message;
   const msgEquals = (param: string) => msg.toLowerCase().startsWith(param);
+
+  autoMod(message, adminTextChannel)
 
   if (msgEquals("?kick") || msgEquals("?ban"))
     return kickOrBanUser(message, msg);
