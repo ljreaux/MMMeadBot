@@ -57,6 +57,15 @@ client.on("messageCreate", (message: Message) => {
 
   if (msgEquals("!abv")) return handleAbvCommands(msg, message);
 
+  if (msgEquals("!flip")) {
+    message.channel.send("🚫 No flips allowed! 🚫")
+    return
+  }
+  if (msgEquals('!bakingsoda')) {
+    message.channel.send('Baking soda is not a mead ingredient!!');
+    return
+  }
+
   return handleCommands(msg, message);
 });
 

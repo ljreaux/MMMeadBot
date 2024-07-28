@@ -87,7 +87,7 @@ export const handleCommands = async (msg: string, message: Message) => {
     let commandList = [];
 
     commandList = com.map((command) => `${command.command}\n`);
-
+    commandList.push('!abv')
     return commandList;
   };
   if (msg == "!list") {
