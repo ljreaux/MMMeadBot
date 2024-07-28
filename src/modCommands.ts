@@ -48,16 +48,16 @@ const isAdmin = (message: Message) => {
 }
 
 export const autoMod = (message: Message, channel: TextChannel) => {
+
   const msg = message.content;
   const { member } = message;
+  let sketchy = false
   sketchyPhrases.forEach(phrase => {
     if (msg.includes(phrase) && !isAdmin(message)) {
       member?.timeout(minutes * 60 * 1000);
-      channel.send(`
-    @everyone
-    User ${member?.user} has been flagged for suspicious activity. They have been timed out for 5min. Suspicious content can be viewed here ${message.url}
-    `)
+      sketchy = true
     }
-  })
 
+  })
+  return sketchy
 }

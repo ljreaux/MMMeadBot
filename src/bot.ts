@@ -38,19 +38,26 @@ client.once(Events.ClientReady, async (readyClient) => {
   await dbConnect();
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
-const adminTextChannel = client.channels.cache.get(adminChannel) as TextChannel;
+
 
 client.on("messageCreate", (message: Message) => {
   // early return if the message is sent by the bot
   if (message.author.bot) {
     return;
   }
+  const adminTextChannel = client.channels.cache.get(adminChannel) as TextChannel;
 
   const msg = message.content;
   const { member } = message;
   const msgEquals = (param: string) => msg.toLowerCase().startsWith(param);
 
-  autoMod(message, adminTextChannel)
+  const sketchy = autoMod(message, adminTextChannel)
+  if (sketchy) adminTextChannel.send(`
+<@&713811216979591282>
+User ${member?.user} has been flagged for suspicious activity. They have been timed out for 15min. 
+Suspicious content can be viewed here ${message.url}
+
+    `)
 
   if (msgEquals("?kick") || msgEquals("?ban"))
     return kickOrBanUser(message, msg);
