@@ -36,6 +36,8 @@ export const kickOrBanUser = (message: Message, msg: string) => {
 const sketchyPhrases = [
   "@everyone",
   "@here",
+  "southern belly pickle",
+  "belly pickle"
 ]
 
 const isAdmin = (message: Message) => {
