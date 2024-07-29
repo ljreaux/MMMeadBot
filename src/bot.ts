@@ -77,6 +77,11 @@ Suspicious content can be viewed here ${message.url}
     return
   }
 
+  if (msgEquals("!bellypickle") || msgEquals('!southernbellypickle')) {
+    message.channel.send("🚓 👮 Prepare for discord jail. 👮 🚓")
+    return
+  }
+
   return handleCommands(msg, message);
 });
 

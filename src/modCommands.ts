@@ -55,7 +55,7 @@ export const autoMod = (message: Message, channel: TextChannel) => {
   const { member } = message;
   let sketchy = false
   sketchyPhrases.forEach(phrase => {
-    if (msg.includes(phrase) && !isAdmin(message)) {
+    if (msg.toLowerCase().includes(phrase) && !isAdmin(message)) {
       member?.timeout(minutes * 60 * 1000);
       sketchy = true
     }
