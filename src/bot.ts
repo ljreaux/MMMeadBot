@@ -22,6 +22,9 @@ import { handleRecipeCommands } from "./recipes";
 import { handleAbvCommands } from "./abvCommand";
 import { autoMod, kickOrBanUser } from "./modCommands";
 import { handleRoleCommands } from "./roles";
+import { assignTempRole, checkRoles, getUserRoles } from "./tempUserRoles";
+
+import cron from "node-cron"
 
 const client = new Client({
   intents: [
@@ -31,6 +34,11 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildPresences,
   ],
+});
+
+cron.schedule("0 2 * * *", async () => {
+  const roles = await getUserRoles()
+  await checkRoles(roles, client)
 });
 
 client.login(token);
@@ -86,6 +94,9 @@ Suspicious content can be viewed here ${message.url}
 });
 
 client.on("guildMemberAdd", (member) => {
+  assignTempRole(member).then((user) => console.log(user))
+
+
   const channel = client.channels.cache.get(welcomeChannel) as TextChannel;
   channel.send(
     `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to receive a rank and join your mini mead making community.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`
