@@ -36,8 +36,7 @@ export const kickOrBanUser = (message: Message, msg: string) => {
 const sketchyPhrases = [
   "@everyone",
   "@here",
-  "southern belly pickle",
-  "belly pickle"
+  /belly.*pickle|pickle.*belly/i
 ]
 
 const isAdmin = (message: Message) => {
@@ -55,9 +54,17 @@ export const autoMod = (message: Message, channel: TextChannel) => {
   const { member } = message;
   let sketchy = false
   sketchyPhrases.forEach(phrase => {
-    if (msg.toLowerCase().includes(phrase) && !isAdmin(message)) {
-      member?.timeout(minutes * 60 * 1000);
-      sketchy = true
+    if (typeof phrase === "string") {
+      if (msg.toLowerCase().includes(phrase) && !isAdmin(message)) {
+        member?.timeout(minutes * 60 * 1000);
+        sketchy = true
+      }
+    }
+    else {
+      if (phrase.test(msg) && !isAdmin(message)) {
+        member?.timeout(minutes * 60 * 1000);
+        sketchy = true
+      }
     }
 
   })
