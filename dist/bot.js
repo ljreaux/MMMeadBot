@@ -10,7 +10,7 @@
 User ${s?.user} has been flagged for suspicious activity. They have been timed out for 15min. 
 Suspicious content can be viewed here ${e.url}
 
-    `),n("?kick")||n("?ban"))return E(e,t);if(n(h))return O(t,e,s);if(n("!recipes")&&U(t,e),n("!abv"))return B(t,e);if(n("!flip")){e.channel.send("\u{1F6AB} No flips allowed! \u{1F6AB}");return}if(n("!bakingsoda")){e.channel.send("Baking soda is not a mead ingredient!!");return}return w(e),S(t,e)});m.on("messageUpdate",(e,o)=>w(o));m.on("guildMemberAdd",e=>{P(e).then(t=>console.log(t)),m.channels.cache.get(le).send(`Welcome to the MMM Discord Server <@${e.user.id}>!
+    `),n("?kick")||n("?ban"))return E(e,t);if(w(e),n(h))return O(t,e,s);if(n("!recipes")&&U(t,e),n("!abv"))return B(t,e);if(n("!flip")){e.channel.send("\u{1F6AB} No flips allowed! \u{1F6AB}");return}if(n("!bakingsoda")){e.channel.send("Baking soda is not a mead ingredient!!");return}return S(t,e)});m.on("messageUpdate",(e,o)=>w(o));m.on("guildMemberAdd",e=>{P(e).then(t=>console.log(t)),m.channels.cache.get(le).send(`Welcome to the MMM Discord Server <@${e.user.id}>!
 
  Please head over to <#${me}> and run **?rank (rank)** to receive a rank and join your mini mead making community.
 

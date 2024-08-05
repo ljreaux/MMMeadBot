@@ -71,6 +71,7 @@ Suspicious content can be viewed here ${message.url}
   if (msgEquals("?kick") || msgEquals("?ban"))
     return kickOrBanUser(message, msg);
 
+  handleHooligans(message)
   if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);
 
   if (msgEquals("!recipes")) handleRecipeCommands(msg, message);
@@ -86,7 +87,7 @@ Suspicious content can be viewed here ${message.url}
     return
   }
 
-  handleHooligans(message)
+
   return handleCommands(msg, message);
 });
 
