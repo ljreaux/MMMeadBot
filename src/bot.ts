@@ -25,6 +25,7 @@ import { handleRoleCommands } from "./roles";
 import { assignTempRole, checkRoles, getUserRoles } from "./tempUserRoles";
 
 import cron from "node-cron"
+import { handleHooligans } from "./bellyPickle";
 
 const client = new Client({
   intents: [
@@ -85,13 +86,14 @@ Suspicious content can be viewed here ${message.url}
     return
   }
 
-  if (msgEquals("!bellypickle") || msgEquals('!southernbellypickle')) {
-    message.channel.send("🚓 👮 Prepare for discord jail. 👮 🚓")
-    return
-  }
-
+  handleHooligans(message)
   return handleCommands(msg, message);
 });
+
+
+client.on('messageUpdate', (_, newMessage) => {
+  return handleHooligans(newMessage);
+})
 
 client.on("guildMemberAdd", (member) => {
   assignTempRole(member).then((user) => console.log(user))

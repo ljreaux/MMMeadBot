@@ -33,10 +33,9 @@ export const kickOrBanUser = (message: Message, msg: string) => {
 };
 
 
-const sketchyPhrases = [
+const sketchyPhrases: (string | RegExp)[] = [
   "@everyone",
   "@here",
-  /belly.*pickle|pickle.*belly/i
 ]
 
 const isAdmin = (message: Message) => {
