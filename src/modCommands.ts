@@ -1,14 +1,10 @@
-import { Message, PermissionsBitField, TextChannel } from "discord.js";
+import { Channel, Message, PermissionsBitField, TextChannel } from "discord.js";
 
-const minutes = 15
+const minutes = 15;
 
 export const kickOrBanUser = (message: Message, msg: string) => {
   const kickOrBan = msg.includes("kick") ? "kick" : "ban";
-  if (
-    !(
-      isAdmin(message)
-    )
-  ) {
+  if (!isAdmin(message)) {
     message.channel.send("Nice try, but you don't have the power");
     return;
   }
@@ -32,40 +28,52 @@ export const kickOrBanUser = (message: Message, msg: string) => {
   return;
 };
 
-
-const sketchyPhrases: (string | RegExp)[] = [
-  "@everyone",
-  "@here",
-]
+const sketchyPhrases: (string | RegExp)[] = ["@everyone", "@here"];
 
 const isAdmin = (message: Message) => {
-  return message.member
-    ?.permissionsIn(message.channel.id)
-    .has(PermissionsBitField.Flags.Administrator) ||
+  return (
+    message.member
+      ?.permissionsIn(message.channel.id)
+      .has(PermissionsBitField.Flags.Administrator) ||
     message.member
       ?.permissionsIn(message.channel.id)
       .has(PermissionsBitField.Flags.ModerateMembers)
-}
+  );
+};
 
 export const autoMod = (message: Message, channel: TextChannel) => {
-
   const msg = message.content;
   const { member } = message;
-  let sketchy = false
-  sketchyPhrases.forEach(phrase => {
+  let sketchy = false;
+  sketchyPhrases.forEach((phrase) => {
     if (typeof phrase === "string") {
       if (msg.toLowerCase().includes(phrase) && !isAdmin(message)) {
         member?.timeout(minutes * 60 * 1000);
-        sketchy = true
+        sketchy = true;
       }
-    }
-    else {
+    } else {
       if (phrase.test(msg) && !isAdmin(message)) {
         member?.timeout(minutes * 60 * 1000);
-        sketchy = true
+        sketchy = true;
       }
     }
+  });
+  return sketchy;
+};
 
-  })
-  return sketchy
-}
+export const sendBotMessage = async (
+  message: Message,
+  getChannel: (channel: string) => TextChannel
+) => {
+  if (!isAdmin(message)) {
+    message.channel.send("Nice try, but you don't have the power");
+    return;
+  }
+
+  const [, channel, ...msgArr] = message.content.split(/[ ,]+/);
+  const channelId = channel.slice(2, channel.length - 1);
+  const cnl = getChannel(channelId);
+  const msg = msgArr.join(" ").trim();
+
+  if (cnl) cnl.send(msg);
+};
