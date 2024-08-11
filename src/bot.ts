@@ -21,7 +21,12 @@ import dbConnect from "./lib/db";
 import { rankCommand, handleCommands } from "./commands";
 import { handleRecipeCommands } from "./recipes";
 import { handleAbvCommands } from "./abvCommand";
-import { autoMod, kickOrBanUser, sendBotMessage } from "./modCommands";
+import {
+  autoMod,
+  kickOrBanUser,
+  registerVideo,
+  sendBotMessage,
+} from "./modCommands";
 import { handleRoleCommands } from "./roles";
 import { assignTempRole, checkRoles, getUserRoles } from "./tempUserRoles";
 
@@ -76,6 +81,8 @@ User ${member?.user} has been flagged for suspicious activity. They have been ti
 Suspicious content can be viewed here ${message.url}
 
     `);
+
+  if (msgEquals("?registervideo")) return registerVideo(message);
 
   if (msgEquals("?kick") || msgEquals("?ban"))
     return kickOrBanUser(message, msg);

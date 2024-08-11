@@ -1,5 +1,5 @@
 import { Channel, Message, PermissionsBitField, TextChannel } from "discord.js";
-
+import Video from "./models/videos.js";
 const minutes = 15;
 
 export const kickOrBanUser = (message: Message, msg: string) => {
@@ -76,4 +76,43 @@ export const sendBotMessage = async (
   const msg = msgArr.join(" ").trim();
 
   if (cnl) cnl.send(msg);
+};
+const addVideo = async (post: { command: string; response: string }) => {
+  const { command, response } = post;
+
+  const newVideo = new Video({ command, response });
+  const savedVideo = await newVideo.save();
+
+  return {
+    command: savedVideo.command,
+    response: savedVideo.response,
+    id: savedVideo._id.toString(),
+  };
+};
+
+export const registerVideo = async (message: Message) => {
+  if (!isAdmin(message)) {
+    message.channel.send("Nice try, but you don't have the power");
+    return;
+  }
+
+  const [, videoCom] = message.content.split(" ");
+  const newVid = message.attachments.first();
+
+  if (!newVid || !videoCom)
+    return message.channel.send(
+      "Please provide a video attachment and command name."
+    );
+
+  const videoUrl = newVid.url;
+  const videoCommand = `!video ${videoCom}`;
+
+  const newVideo = await addVideo({
+    command: videoCommand,
+    response: videoUrl,
+  });
+
+  if (newVideo)
+    return message.channel.send(`${videoCom} has been successfully added.`);
+  return message.channel.send("Something went wrong.");
 };
