@@ -11,17 +11,18 @@ export const getVideos = async () => await Video.find();
 
 export const handleVideos = async (msg: string, message: Message) => {
   const videos = await getVideos();
-  const [, recipe] = msg.split(" ");
-  if (!recipe) return;
-  const recipeString = recipe?.toLowerCase() || "";
-  const foundRecipe = videos.find((r: { command: string; response: string }) =>
-    r.command.includes(recipeString)
+  const [, video] = msg.split(" ");
+  if (!video) return;
+  const videoString = video?.toLowerCase() || "";
+  const foundRecipe = videos.find(
+    (vid: { command: string; response: string }) =>
+      vid.command.includes(videoString)
   );
   if (foundRecipe) {
     message.channel.send(foundRecipe.response);
     return;
-  } else if (recipe) {
-    message.channel.send(`The recipe ${recipe} is not a valid recipe command.`);
+  } else if (video) {
+    message.channel.send(`The video ${video} is not a valid video command.`);
     return;
   }
 };
