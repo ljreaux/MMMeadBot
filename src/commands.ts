@@ -29,7 +29,7 @@ export const rankCommand = "?rank ";
 export const isUnauthorized = (rank: string) => {
   let unauthorized = false;
   const noRoles = [
-    "@everyone", 
+    "@everyone",
     "Everyone",
     "@Everyone",
     "everyone",
@@ -50,7 +50,7 @@ export const isUnauthorized = (rank: string) => {
     "YT Bot",
     "UMM2024",
     "UMM 2024 Purgatory Member",
-    "Commercial"
+    "Commercial",
   ];
   noRoles.forEach((item) => {
     if (
@@ -72,7 +72,7 @@ export const handleCommands = async (msg: string, message: Message) => {
     .reduce((acc, r) => `${acc}\n- ${r}`);
 
   for (let option of commands) {
-    if (msg.includes("!recipes ")) return;
+    if (msg.includes("!recipes ") || msg.includes("!video ")) return;
     if (option.command === msg || msg.startsWith(option.command)) {
       if (msg.toLowerCase().startsWith("!listranks"))
         option.response += ` \n- ${rankString}`;
@@ -87,7 +87,7 @@ export const handleCommands = async (msg: string, message: Message) => {
     let commandList = [];
 
     commandList = com.map((command) => `${command.command}\n`);
-    commandList.push('!abv')
+    commandList.push("!abv");
     return commandList;
   };
   if (msg == "!list") {

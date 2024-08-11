@@ -27,6 +27,7 @@ import { assignTempRole, checkRoles, getUserRoles } from "./tempUserRoles";
 
 import cron from "node-cron";
 import { handleHooligans } from "./bellyPickle";
+import { handleVideos } from "./videos";
 
 const client = new Client({
   intents: [
@@ -83,6 +84,7 @@ Suspicious content can be viewed here ${message.url}
   if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);
 
   if (msgEquals("!recipes")) handleRecipeCommands(msg, message);
+  if (msgEquals("!video")) handleVideos(msg, message);
 
   if (msgEquals("!abv")) return handleAbvCommands(msg, message);
 
