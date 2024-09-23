@@ -33,6 +33,7 @@ import { assignTempRole, checkRoles, getUserRoles } from "./tempUserRoles";
 import cron from "node-cron";
 import { handleHooligans } from "./bellyPickle";
 import { handleVideos } from "./videos";
+import avocadoImg from "./avocado";
 
 const client = new Client({
   intents: [
@@ -103,7 +104,10 @@ Suspicious content can be viewed here ${message.url}
     message.channel.send("Baking soda is not a mead ingredient!!");
     return;
   }
-
+  if (msgEquals('!avocadohoney')) {
+    message.channel.send(avocadoImg());
+    return;
+  }
   return handleCommands(msg, message);
 });
 
