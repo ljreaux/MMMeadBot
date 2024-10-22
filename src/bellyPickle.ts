@@ -1,6 +1,6 @@
 import { Message, PartialMessage, TextChannel } from "discord.js"
 
-const regex = /belly.*pickle|pickle.*belly/i
+const regex = /belly.*pickle|pickle.*belly|pelly|bickle|sbp|s.b.p|belly.*cucumber|cucumber.*belly|tummy.*pickle|pickle.*tummy/i
 export const handleHooligans = async (message: Message | Message<boolean> | PartialMessage) => {
   if (message.content)
     if (regex.test(message.content)) {
