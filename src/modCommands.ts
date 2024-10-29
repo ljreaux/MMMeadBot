@@ -1,32 +1,6 @@
-import { Channel, Message, PermissionsBitField, TextChannel } from "discord.js";
+import { Message, PermissionsBitField, TextChannel } from "discord.js";
 import Video from "./models/videos.js";
 const minutes = 15;
-
-export const kickOrBanUser = (message: Message, msg: string) => {
-  const kickOrBan = msg.includes("kick") ? "kick" : "ban";
-  if (!isAdmin(message)) {
-    message.channel.send("Nice try, but you don't have the power");
-    return;
-  }
-  let [, user] = msg.split(" ");
-  if (!user) {
-    message.channel.send(`You need to specify a user to ${kickOrBan}.`);
-    return;
-  }
-  const userToKick = message.mentions.users.first();
-
-  if (!userToKick) {
-    message.channel.send("User not found.");
-    return;
-  }
-  if (kickOrBan === "kick") {
-    message.guild?.members.kick(userToKick);
-  } else {
-    message.guild?.members.ban(userToKick);
-  }
-  message.channel.send(`${userToKick.tag} has been ${kickOrBan}ed.`);
-  return;
-};
 
 const sketchyPhrases: (string | RegExp)[] = ["@everyone", "@here"];
 
@@ -41,34 +15,51 @@ const isAdmin = (message: Message) => {
   );
 };
 
-export const autoMod = (message: Message, channel: TextChannel) => {
-  const msg = message.content;
+export const kickOrBanUser = (message: Message, msg: string) => {
+  const kickOrBan = msg.includes("kick") ? "kick" : "ban";
+  if (!isAdmin(message))
+    return message.channel.send("Nice try, but you don't have the power");
+
+  let [, user] = msg.split(" ");
+  if (!user)
+    return message.channel.send(`You need to specify a user to ${kickOrBan}.`);
+
+  const userToKick = message.mentions.users.first();
+
+  if (!userToKick) return message.channel.send("User not found.");
+
+  if (kickOrBan === "kick") message.guild?.members.kick(userToKick);
+  else message.guild?.members.ban(userToKick);
+
+  return message.channel.send(`${userToKick.tag} has been ${kickOrBan}ed.`);
+};
+
+export const autoMod = (message: Message) => {
+  const msg = message.content.toLowerCase();
   const { member } = message;
-  let sketchy = false;
-  sketchyPhrases.forEach((phrase) => {
-    if (typeof phrase === "string") {
-      if (msg.toLowerCase().includes(phrase) && !isAdmin(message)) {
-        member?.timeout(minutes * 60 * 1000);
-        sketchy = true;
-      }
-    } else {
-      if (phrase.test(msg) && !isAdmin(message)) {
-        member?.timeout(minutes * 60 * 1000);
-        sketchy = true;
-      }
+
+  if (isAdmin(message)) return false;
+
+  const isSketchy = (phrase: string | RegExp, msg: string) =>
+    typeof phrase === "string" ? msg.includes(phrase) : phrase.test(msg);
+
+  for (const phrase of sketchyPhrases) {
+    const sketch = isSketchy(phrase, msg);
+
+    if (sketch) {
+      member?.timeout(minutes * 60 * 1000);
+      return sketch;
     }
-  });
-  return sketchy;
+  }
+  return false;
 };
 
 export const sendBotMessage = async (
   message: Message,
   getChannel: (channel: string) => TextChannel
 ) => {
-  if (!isAdmin(message)) {
-    message.channel.send("Nice try, but you don't have the power");
-    return;
-  }
+  if (!isAdmin(message))
+    return message.channel.send("Nice try, but you don't have the power");
 
   const [, channel, ...msgArr] = message.content.split(/[ ,]+/);
   const channelId = channel.slice(2, channel.length - 1);
@@ -77,6 +68,7 @@ export const sendBotMessage = async (
 
   if (cnl) cnl.send(msg);
 };
+
 const addVideo = async (post: { command: string; response: string }) => {
   const { command, response } = post;
 
@@ -91,10 +83,8 @@ const addVideo = async (post: { command: string; response: string }) => {
 };
 
 export const registerVideo = async (message: Message) => {
-  if (!isAdmin(message)) {
-    message.channel.send("Nice try, but you don't have the power");
-    return;
-  }
+  if (!isAdmin(message))
+    return message.channel.send("Nice try, but you don't have the power");
 
   const [, videoCom] = message.content.split(" ");
   const newVid = message.attachments.first();
@@ -114,5 +104,6 @@ export const registerVideo = async (message: Message) => {
 
   if (newVideo)
     return message.channel.send(`${videoCom} has been successfully added.`);
+
   return message.channel.send("Something went wrong.");
 };

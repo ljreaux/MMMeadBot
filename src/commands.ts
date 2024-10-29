@@ -14,9 +14,7 @@ const ranks = [
   "100 Meads",
 ];
 
-const rankString = ranks.reduce((acc, r) => {
-  return `${acc}\n- ${r}`;
-});
+const rankString = ranks.reduce((acc, r) => `${acc}\n- ${r}`);
 
 export interface CommandType {
   command: string;
@@ -24,44 +22,6 @@ export interface CommandType {
 }
 
 export const getCommands = async () => await Command.find();
-
-export const rankCommand = "?rank ";
-export const isUnauthorized = (rank: string) => {
-  let unauthorized = false;
-  const noRoles = [
-    "@everyone",
-    "Everyone",
-    "@Everyone",
-    "everyone",
-    "Administrator",
-    "Moderator",
-    "Mazer of the Week",
-    "Patreon Bot",
-    "Discord Mead Leader",
-    "MMM Patron",
-    "Mead Bot",
-    "Rythm",
-    "Server Booster",
-    "EasyPoll",
-    "Live Countdown Bot",
-    "YouTube Member",
-    "technician",
-    "YouTube",
-    "YT Bot",
-    "UMM2024",
-    "UMM 2024 Purgatory Member",
-    "Commercial",
-  ];
-  noRoles.forEach((item) => {
-    if (
-      item.toLowerCase() === rank.toLowerCase() ||
-      item.toLowerCase().includes(rank.toLowerCase())
-    ) {
-      unauthorized = true;
-    }
-  });
-  return unauthorized;
-};
 
 export const handleCommands = async (msg: string, message: Message) => {
   const recipes = await getRecipes();
@@ -71,12 +31,15 @@ export const handleCommands = async (msg: string, message: Message) => {
     .map((recipe) => recipe.name)
     .reduce((acc, r) => `${acc}\n- ${r}`);
 
-  for (let option of commands) {
+  for (const option of commands) {
     if (msg.includes("!recipes ") || msg.includes("!video ")) return;
-    if (option.command === msg || msg.startsWith(option.command)) {
+
+    if (msg.startsWith(option.command)) {
       if (msg.toLowerCase().startsWith("!listranks"))
         option.response += ` \n- ${rankString}`;
+
       if (msg === "!recipes") option.response += ` \n- ${recipesString}`;
+
       message.channel
         .send(option.response)
         .catch((error) => console.error(error));
@@ -84,17 +47,17 @@ export const handleCommands = async (msg: string, message: Message) => {
   }
 
   const getListOfCommands = (com: CommandType[]) => {
-    let commandList = [];
-
-    commandList = com.map((command) => `${command.command}\n`);
+    const commandList = com.map((command) => `${command.command}\n`);
     commandList.push("!abv");
     return commandList;
   };
+
   if (msg == "!list") {
     const commandListHeader = "\n**Available Bot Commands**\n";
     const commandList = getListOfCommands(commands);
     const formattedList = `${commandListHeader}${commandList}`;
     const patched = formattedList.replaceAll(",", "");
-    message.channel.send(patched).catch((error) => console.error(error));
+
+    return message.channel.send(patched).catch((error) => console.error(error));
   }
 };

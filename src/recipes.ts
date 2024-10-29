@@ -11,6 +11,7 @@ export const getRecipes = async () => await Recipe.find();
 export const handleRecipeCommands = async (msg: string, message: Message) => {
   const recipes = await getRecipes();
   const [, recipe] = msg.split(" ");
+
   if (!recipe) return;
   const recipeString = recipe?.toLowerCase() || "";
   const foundRecipe = recipes.find((r) => r.name === recipeString);

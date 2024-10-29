@@ -18,7 +18,7 @@ const {
 } = process.env;
 
 import dbConnect from "./lib/db";
-import { rankCommand, handleCommands } from "./commands";
+import { handleCommands } from "./commands";
 import { handleRecipeCommands } from "./recipes";
 import { handleAbvCommands } from "./abvCommand";
 import {
@@ -27,7 +27,7 @@ import {
   registerVideo,
   sendBotMessage,
 } from "./modCommands";
-import { handleRoleCommands } from "./roles";
+import { handleRoleCommands, rankCommand } from "./roles";
 import { assignTempRole, checkRoles, getUserRoles } from "./tempUserRoles";
 
 import cron from "node-cron";
@@ -58,9 +58,8 @@ client.once(Events.ClientReady, async (readyClient) => {
 
 client.on("messageCreate", (message: Message) => {
   // early return if the message is sent by the bot
-  if (message.author.bot) {
-    return;
-  }
+  if (message.author.bot) return;
+
   const adminTextChannel = client.channels.cache.get(
     adminChannel
   ) as TextChannel;
@@ -74,52 +73,46 @@ client.on("messageCreate", (message: Message) => {
 
   if (msgEquals(`<@${clientId}>`)) sendBotMessage(message, getTextChannel);
 
-  const sketchy = autoMod(message, adminTextChannel);
-  if (sketchy)
-    adminTextChannel.send(`
+  // prevents @everyone
+  const sketchy = autoMod(message);
+  const autoModMsg = `
 <@&713811216979591282>
 User ${member?.user} has been flagged for suspicious activity. They have been timed out for 15min. 
-Suspicious content can be viewed here ${message.url}
+Suspicious content can be viewed here ${message.url}`;
 
-    `);
+  if (sketchy) return adminTextChannel.send(autoModMsg);
 
+  // admin only commands
   if (msgEquals("?registervideo")) return registerVideo(message);
 
   if (msgEquals("?kick") || msgEquals("?ban"))
     return kickOrBanUser(message, msg);
 
   handleHooligans(message);
-  if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);
 
+  // unlisted commands
   if (msgEquals("!recipes")) handleRecipeCommands(msg, message);
-  if (msgEquals("!video")) handleVideos(msg, message);
-
+  if (msgEquals("!video")) return handleVideos(msg, message);
   if (msgEquals("!abv")) return handleAbvCommands(msg, message);
+  if (msgEquals("!flip"))
+    return message.channel.send("🚫 No flips allowed! 🚫");
+  if (msgEquals("!bakingsoda"))
+    return message.channel.send("Baking soda is not a mead ingredient!!");
+  if (msgEquals("!avocadohoney")) return message.channel.send(avocadoImg());
 
-  if (msgEquals("!flip")) {
-    message.channel.send("🚫 No flips allowed! 🚫");
-    return;
-  }
-  if (msgEquals("!bakingsoda")) {
-    message.channel.send("Baking soda is not a mead ingredient!!");
-    return;
-  }
-  if (msgEquals('!avocadohoney')) {
-    message.channel.send(avocadoImg());
-    return;
-  }
+  // listed commands
+  if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);
   return handleCommands(msg, message);
 });
 
-client.on("messageUpdate", (_, newMessage) => {
-  return handleHooligans(newMessage);
-});
+client.on("messageUpdate", (_, newMessage) => handleHooligans(newMessage));
 
 client.on("guildMemberAdd", (member) => {
-  assignTempRole(member).then((user) => console.log(user));
+  assignTempRole(member);
 
   const channel = client.channels.cache.get(welcomeChannel) as TextChannel;
-  channel.send(
-    `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to receive a rank and join your mini mead making community.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`
-  );
+
+  const welcomeMessage = `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to receive a rank and join your mini mead making community.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`;
+
+  channel.send(welcomeMessage);
 });

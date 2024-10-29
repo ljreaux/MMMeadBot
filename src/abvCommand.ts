@@ -1,8 +1,7 @@
 import { Message } from "discord.js";
 
-const toBrix = (value: number) => {
-  return -668.962 + 1262.45 * value - 776.43 * value ** 2 + 182.94 * value ** 3;
-};
+const toBrix = (value: number) =>
+  -668.962 + 1262.45 * value - 776.43 * value ** 2 + 182.94 * value ** 3;
 
 export const getAbv = (OG: number, FG: number) => {
   const OE = -668.962 + 1262.45 * OG - 776.43 * OG ** 2 + 182.94 * OG ** 3;
@@ -31,18 +30,16 @@ export const handleAbvCommands = (msg: string, message: Message) => {
     );
   };
 
-  if (areInvalid()) {
-    message.channel.send(
+  if (areInvalid())
+    return message.channel.send(
       "Please enter a valid number for OG and FG. Example: !abv 1.050 1.010"
     );
-    return;
-  }
 
   const [delle, ABV] = getAbv(OG, FG);
-  message.channel.send(
-    `An OG of ${OG.toFixed(3)} and an FG of ${FG.toFixed(
-      3
-    )} will make ${ABV}% ABV and ${delle} delle units.`
-  );
-  return;
+
+  const response = `An OG of ${OG.toFixed(3)} and an FG of ${FG.toFixed(
+    3
+  )} will make ${ABV}% ABV and ${delle} delle units.`;
+
+  return message.channel.send(response);
 };
