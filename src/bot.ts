@@ -34,6 +34,8 @@ import cron from "node-cron";
 import { handleHooligans } from "./bellyPickle";
 import { handleVideos } from "./videos";
 import avocadoImg from "./avocado";
+import { dv10 } from "./writeToDv10";
+// import writeToDv10File from "./writeToDv10";
 
 const client = new Client({
   intents: [
@@ -57,7 +59,10 @@ client.once(Events.ClientReady, async (readyClient) => {
 });
 
 client.on("messageCreate", (message: Message) => {
+  // writeToDv10File(message)
+
   // early return if the message is sent by the bot
+
   if (message.author.bot) return;
 
   const adminTextChannel = client.channels.cache.get(
@@ -99,6 +104,7 @@ Suspicious content can be viewed here ${message.url}`;
   if (msgEquals("!bakingsoda"))
     return message.channel.send("Baking soda is not a mead ingredient!!");
   if (msgEquals("!avocadohoney")) return message.channel.send(avocadoImg());
+  if (msgEquals("!dv10")) return dv10(message);
 
   // listed commands
   if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);
