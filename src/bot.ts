@@ -104,7 +104,7 @@ Suspicious content can be viewed here ${message.url}`;
   if (msgEquals("!bakingsoda"))
     return message.channel.send("Baking soda is not a mead ingredient!!");
   if (msgEquals("!avocadohoney")) return message.channel.send(avocadoImg());
-  if (msgEquals("!dv10")) return dv10(message);
+  if (msgEquals("!dv10")) return message.channel.send(dv10());
 
   // listed commands
   if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);

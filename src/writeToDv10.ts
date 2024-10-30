@@ -13,17 +13,15 @@ export default function writeToDv10File(message: Message) {
     fs.appendFile(filePath, "\n" + image, (err) => console.error(err));
 }
 
-export const dv10 = (message: Message) => {
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) {
-      console.error(err);
-      return [];
-    }
+export const dv10 = () => {
+  try {
+    const data = fs.readFileSync(filePath, "utf-8");
+    const images = data.split("\n").map((d)=> d.trim()).filter(l => l.length > 0)
 
-    // Split the file content into an array of lines
-    const lines = data.split("\n");
-    if (lines.length)
-      message.channel.send(lines[Math.floor(Math.random() * lines.length)]);
-    else console.error("No lines found.");
-  });
+    if (images.length) return images[Math.floor(Math.random() * images.length)];
+    else throw Error("No lines found.");
+  } catch (err) {
+    console.error(err);
+    return "";
+  }
 };
