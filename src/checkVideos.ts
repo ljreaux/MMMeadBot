@@ -1,10 +1,9 @@
 import { Client, EmbedBuilder, TextChannel } from "discord.js";
-import fs from "fs";
 import Parser from "rss-parser";
+import NewVideo from "./models/newVideo";
 const parser = new Parser();
 const { YOUTUBE_XML_URL, youtubeShenanigans, guildId } = process.env;
 export default async function checkVideos(client: Client) {
-  const jsonPath = "./recentVideo.json";
   try {
     if (!YOUTUBE_XML_URL || !youtubeShenanigans || !guildId) throw new Error();
     const guild = await client.guilds.fetch(guildId);
@@ -13,13 +12,18 @@ export default async function checkVideos(client: Client) {
     )) as TextChannel;
 
     const data = await parser.parseURL(YOUTUBE_XML_URL);
-    const rawData = fs.readFileSync(jsonPath);
-    const { id } = JSON.parse(rawData.toString());
-
+    const [rawData] = await NewVideo.find().lean();
+    const id = rawData?.video_id || "";
     const { id: mostRecentVideoId, title, link, author } = data.items[0];
 
     if (id !== mostRecentVideoId) {
-      fs.writeFileSync(jsonPath, JSON.stringify({ id: mostRecentVideoId }));
+      await NewVideo.deleteMany({});
+      const newVideo = await NewVideo.create({
+        created_at: new Date(),
+        video_id: mostRecentVideoId,
+      });
+      const res = await newVideo.save();
+      console.log("New video stored: ", res);
       const embed = new EmbedBuilder({
         title,
         url: link,
