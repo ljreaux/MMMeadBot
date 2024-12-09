@@ -36,6 +36,7 @@ import { handleVideos } from "./videos";
 import avocadoImg from "./avocado";
 import { dv10 } from "./writeToDv10";
 import checkVideos from "./checkVideos";
+import tagFunPants from "./tagFunpants";
 // import writeToDv10File from "./writeToDv10";
 
 const client = new Client({
@@ -54,6 +55,13 @@ cron.schedule("0 2 * * *", async () => {
 });
 
 cron.schedule("*/5 * * * *", async () => await checkVideos(client));
+
+cron.schedule("*/5 * * * *", async () => {
+  const randomChance = Math.random() * 10;
+  if (randomChance > 1) {
+    tagFunPants(client);
+  }
+});
 
 client.login(token);
 client.once(Events.ClientReady, async (readyClient) => {
