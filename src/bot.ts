@@ -37,7 +37,6 @@ import avocadoImg from "./avocado";
 import { dv10 } from "./writeToDv10";
 import checkVideos from "./checkVideos";
 import tagFunPants from "./tagFunpants";
-// import writeToDv10File from "./writeToDv10";
 
 const client = new Client({
   intents: [
@@ -78,9 +77,7 @@ client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-client.on("messageCreate", (message: Message) => {
-  // writeToDv10File(message)
-
+client.on("messageCreate", async (message: Message) => {
   // early return if the message is sent by the bot
 
   if (message.author.bot) return;
@@ -124,7 +121,7 @@ Suspicious content can be viewed here ${message.url}`;
   if (msgEquals("!bakingsoda"))
     return message.channel.send("Baking soda is not a mead ingredient!!");
   if (msgEquals("!avocadohoney")) return message.channel.send(avocadoImg());
-  if (msgEquals("!dv10")) return message.channel.send(dv10());
+  if (msgEquals("!dv10")) return message.channel.send(await dv10());
 
   // listed commands
   if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);

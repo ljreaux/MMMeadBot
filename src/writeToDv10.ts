@@ -1,27 +1,34 @@
-import { Message } from "discord.js";
-import fs from "fs";
+const backendUrl = "https://cloudinary-dv10-api.vercel.app/api/list-media";
 
-const filePath = "./dv10.txt";
-
-export default function writeToDv10File(message: Message) {
-  const image = message.attachments
-    .toJSON()
-    ?.map((i) => i?.url)
-    .join("\n");
-
-  if (image !== "[]")
-    fs.appendFile(filePath, "\n" + image, (err) => console.error(err));
-}
-
-export const dv10 = () => {
+export const fetchCloudinaryImages = async (): Promise<string[]> => {
   try {
-    const data = fs.readFileSync(filePath, "utf-8");
-    const images = data.split("\n").map((d)=> d.trim()).filter(l => l.length > 0)
+    const response = await fetch(backendUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch images: ${response.statusText}`);
+    }
+    const data = await response.json();
+    const images = data.resources
+      .filter((resource: { secure_url: string }) => resource.secure_url)
+      .map((resource: { secure_url: string }) => resource.secure_url);
 
-    if (images.length) return images[Math.floor(Math.random() * images.length)];
-    else throw Error("No lines found.");
+    return images;
+  } catch (err) {
+    console.error("Error fetching Cloudinary images:", err);
+    return [];
+  }
+};
+
+export const dv10 = async (): Promise<string> => {
+  try {
+    const images = await fetchCloudinaryImages();
+
+    if (images.length) {
+      return images[Math.floor(Math.random() * images.length)];
+    } else {
+      throw new Error("No images found in the Cloudinary folder.");
+    }
   } catch (err) {
     console.error(err);
-    return "";
+    return "No images available.";
   }
 };
