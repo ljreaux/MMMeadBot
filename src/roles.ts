@@ -1,5 +1,7 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 export const rankCommand = "?rank ";
+const RANK_CHANNEL = "1322772543962349670";
+
 const protectedRoles = [
   "@everyone",
   "Everyone",
@@ -74,6 +76,21 @@ export const handleRoleCommands = (
   memberRoles?.forEach((r) => member?.roles.remove(r.id));
 
   member?.roles.add(role.id);
+
+  const rank_up = message.guild?.channels.cache.get(
+    RANK_CHANNEL
+  ) as TextChannel;
+
+  console.log(rank_up);
+
+  rank_up
+    ?.send(
+      `Congratulations to ${message.author.toString()} for graduating to the the rank ${
+        role.name
+      }!`
+    )
+    .catch((error) => console.error(error));
+
   return message.channel
     .send(`You have been assigned to role "${role.name}"`)
     .catch((error) => console.error(error));
