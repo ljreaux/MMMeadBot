@@ -107,3 +107,18 @@ export const registerVideo = async (message: Message) => {
 
   return message.channel.send("Something went wrong.");
 };
+
+export const listAdminCommands = (message: Message) => {
+  if (!isAdmin(message)) return;
+
+  return message.channel.send(`Here are all the admin commands:
+1. ?kick \`@user\`
+2. ?ban \`@user\`
+3. ?registerVideo \`video name\` (attach video to message)
+4. To send a message from the bot, enter the following separated by spaces:
+  - \`@MMMeadBot\`
+  - \`#channel-name\`
+  - Your Message
+5. To add new commands visit the [admin dashboard.](https://mmmeadbot-admin-dashboard.vercel.app/)
+   `);
+};

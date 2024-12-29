@@ -24,6 +24,7 @@ import { handleAbvCommands } from "./abvCommand";
 import {
   autoMod,
   kickOrBanUser,
+  listAdminCommands,
   registerVideo,
   sendBotMessage,
 } from "./modCommands";
@@ -110,6 +111,7 @@ Suspicious content can be viewed here ${message.url}`;
   if (msgEquals("?kick") || msgEquals("?ban"))
     return kickOrBanUser(message, msg);
 
+  if (msgEquals("!adminlist")) return listAdminCommands(message);
   handleHooligans(message);
 
   // unlisted commands
@@ -135,7 +137,7 @@ client.on("guildMemberAdd", (member) => {
 
   const channel = client.channels.cache.get(welcomeChannel) as TextChannel;
 
-  const welcomeMessage = `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to receive a rank and join your mini mead making community.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`;
+  const welcomeMessage = `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to receive a rank.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`;
 
   channel.send(welcomeMessage);
 });
