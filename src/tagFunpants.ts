@@ -1,4 +1,4 @@
-import { Client, TextChannel, ChannelType } from "discord.js";
+import { Client, TextChannel, ChannelType, PermissionsBitField } from "discord.js";
 const { guildId } = process.env;
 
 export default async function tagFunPants(client: Client) {
@@ -16,21 +16,29 @@ export default async function tagFunPants(client: Client) {
     // Fetch all channels in the guild
     const channels = await guild.channels.fetch();
 
-    // Filter for standard text channels where the bot can send messages
-    const textChannels = channels.filter(
-      (channel) =>
-        channel?.type === ChannelType.GuildText && // Standard text channels only
-        channel?.permissionsFor(guild.members.me!)?.has("SendMessages") // Bot has permission to send messages
-    );
+    // Filter for standard text channels where both users have access and the bot can send messages
+    const accessibleChannels = channels.filter((channel) => {
+      if (channel?.type !== ChannelType.GuildText) return false; // Ensure it's a text channel
+      const botPermissions = channel?.permissionsFor(guild.members.me!);
+      const funPantsPermissions = channel?.permissionsFor(FUNPANTS);
+      const styngerPermissions = channel?.permissionsFor(STYNGER);
 
-    console.log(textChannels.map((channel) => channel?.name));
+      // Check if the bot and both users have permission to view and send messages in the channel
+      return (
+        botPermissions?.has(PermissionsBitField.Flags.SendMessages) &&
+        funPantsPermissions?.has(PermissionsBitField.Flags.ViewChannel) &&
+        styngerPermissions?.has(PermissionsBitField.Flags.ViewChannel)
+      );
+    });
 
-    if (!textChannels.size) {
+    console.log(accessibleChannels.map((channel) => channel?.name));
+
+    if (!accessibleChannels.size) {
       throw new Error("No suitable text channels available.");
     }
 
     // Select a random channel from the filtered list
-    const randomChannel = textChannels.random() as TextChannel;
+    const randomChannel = accessibleChannels.random() as TextChannel;
 
     const randomNum = Math.random();
 
@@ -39,6 +47,7 @@ export default async function tagFunPants(client: Client) {
 
     let msg = `Hi, <@${tagUserId}>`;
     if (randomNum > 0.75) msg += carlosVid;
+
     // Send a message in the selected random channel
     await randomChannel.send(msg);
   } catch (err) {
