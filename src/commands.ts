@@ -2,20 +2,6 @@ import { Message } from "discord.js";
 import Command from "./models/commands";
 import { getRecipes } from "./recipes";
 
-const ranks = [
-  "Beginner",
-  "10 Meads",
-  "20 Meads",
-  "25 Meads",
-  "30 Meads",
-  "40 Meads",
-  "50 Meads",
-  "75 Meads",
-  "100 Meads",
-];
-
-const rankString = ranks.reduce((acc, r) => `${acc}\n- ${r}`);
-
 export interface CommandType {
   command: string;
   response: string;
@@ -24,6 +10,36 @@ export interface CommandType {
 export const getCommands = async () => await Command.find();
 
 export const handleCommands = async (msg: string, message: Message) => {
+  const memberRoles = message?.guild?.roles.cache.filter(
+    (r) =>
+      r.name.toLowerCase().includes("meads") ||
+      r.name.toLowerCase() === "beginner"
+  );
+  const ranks =
+    memberRoles
+      ?.map((r) => r.name)
+      .sort((a: string, b: string): number => {
+        const isNumericA = /^\d+/.test(a); // Check if `a` starts with a number
+        const isNumericB = /^\d+/.test(b); // Check if `b` starts with a number
+
+        if (isNumericA && isNumericB) {
+          // Both start with numbers, compare them numerically
+          const numA = parseInt(a.match(/^\d+/)![0], 10);
+          const numB = parseInt(b.match(/^\d+/)![0], 10);
+          return numA - numB;
+        } else if (isNumericA) {
+          // `a` is numeric but `b` is not, `b` comes first
+          return 1;
+        } else if (isNumericB) {
+          // `b` is numeric but `a` is not, `a` comes first
+          return -1;
+        } else {
+          // Neither are numeric, compare alphabetically
+          return a.localeCompare(b);
+        }
+      }) || [];
+  const rankString = ranks.reduce((acc, r) => `${acc}\n- ${r}`);
+
   const recipes = await getRecipes();
   const commands = await getCommands();
 
