@@ -65,10 +65,7 @@ Run \`!arglist\`  for a list of arguments
 };
 
 export const listArgs = (message: Message) => {
-  // Group the arguments by their `link`
   const grouped = VALID_ARGS.groupBy((a) => a.link);
-
-  // Construct the Markdown message
   const formattedMessage = Object.entries(grouped)
     .map(([link, args]) => {
       const lastPartOfUrl = link.split("/").pop() || ""; // Extract the last part of the URL
