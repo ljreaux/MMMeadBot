@@ -14,7 +14,7 @@ Run \`!arglist\`  for a list of arguments
 `);return`**${r}**
 ${i}`}).join(`
 
-`);e.channel.send(`Here are all the available arguments organized by URL path:
+`);e.channel.send(`Here are all the available arguments organized by path:
 
 ${o}`)};fe.default.config();var{token:Ke,clientId:ze,welcomeChannel:Xe="",botSpamChannel:Je="",generalChannel:Ze="",adminChannel:Qe=""}=process.env,u=new f.Client({intents:[f.GatewayIntentBits.Guilds,f.GatewayIntentBits.GuildMessages,f.GatewayIntentBits.MessageContent,f.GatewayIntentBits.GuildMembers,f.GatewayIntentBits.GuildPresences]});$.default.schedule("0 2 * * *",async()=>{let e=await ee();await ne(e,u)});$.default.schedule("*/5 * * * *",async()=>await _(u));$.default.schedule("0 * * * *",async()=>{Math.random()*30<=1&&N(u)});u.login(Ke);u.once(f.Events.ClientReady,async e=>{await O(),console.log(`Ready! Logged in as ${e.user.tag}`)});u.on("messageCreate",async e=>{if(e.author.bot)return;let n=u.channels.cache.get(Qe),o=l=>u.channels.cache.get(l),s=e.content,{member:t}=e,r=l=>s.toLowerCase().startsWith(l);r(`<@${ze}>`)&&K(e,o);let i=H(e),c=`
 <@&713811216979591282>
