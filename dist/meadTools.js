@@ -7,6 +7,6 @@ Run \`!arglist\`  for a list of arguments
 `);return`**${i}**
 ${l}`}).join(`
 
-`);t.channel.send(`Here are all the available arguments organized by path:
+`);t.channel.send(`Here are all the available arguments organized by URL path:
 
 ${r}`)};0&&(module.exports={listArgs,meadTools});
