@@ -76,6 +76,6 @@ export const listArgs = (message: Message) => {
 
   // Send the formatted message
   message.channel.send(
-    `Here are all the available arguments organized by URL path:\n\n${formattedMessage}`
+    `Here are all the available arguments organized by path:\n\n${formattedMessage}`
   );
 };
