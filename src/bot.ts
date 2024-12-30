@@ -1,3 +1,4 @@
+import "./utils/groupByPolyfill"; // Import the polyfill
 import {
   Client,
   Events,
@@ -38,6 +39,7 @@ import avocadoImg from "./avocado";
 import { dv10 } from "./writeToDv10";
 import checkVideos from "./checkVideos";
 import tagFunPants from "./tagFunpants";
+import { listArgs, meadTools } from "./meadTools";
 
 const client = new Client({
   intents: [
@@ -125,6 +127,8 @@ Suspicious content can be viewed here ${message.url}`;
   if (msgEquals("!avocadohoney")) return message.channel.send(avocadoImg());
   if (msgEquals("!dv10")) return message.channel.send(await dv10());
 
+  if (msgEquals("!meadtools")) return meadTools(message);
+  if (msgEquals("!arglist")) return listArgs(message);
   // listed commands
   if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);
   return handleCommands(msg, message);
