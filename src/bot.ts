@@ -40,6 +40,7 @@ import { dv10 } from "./writeToDv10";
 import checkVideos from "./checkVideos";
 import tagFunPants from "./tagFunpants";
 import { listArgs, meadTools } from "./meadTools";
+import meadMentorsList from "./meadMentors";
 
 const client = new Client({
   intents: [
@@ -129,6 +130,9 @@ Suspicious content can be viewed here ${message.url}`;
 
   if (msgEquals("!meadtools")) return meadTools(message);
   if (msgEquals("!arglist")) return listArgs(message);
+
+  if (msgEquals("!mentorlist")) return meadMentorsList(message);
+
   // listed commands
   if (msgEquals(rankCommand) || msgEquals("!rank"))
     return handleRoleCommands(msg, message, member);

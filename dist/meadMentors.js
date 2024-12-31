@@ -1,0 +1,3 @@
+"use strict";var o=Object.defineProperty;var m=Object.getOwnPropertyDescriptor;var a=Object.getOwnPropertyNames;var c=Object.prototype.hasOwnProperty;var d=(e,n)=>{for(var s in n)o(e,s,{get:n[s],enumerable:!0})},i=(e,n,s,t)=>{if(n&&typeof n=="object"||typeof n=="function")for(let r of a(n))!c.call(e,r)&&r!==s&&o(e,r,{get:()=>n[r],enumerable:!(t=m(n,r))||t.enumerable});return e};var M=e=>i(o({},"__esModule",{value:!0}),e);var f={};d(f,{default:()=>p});module.exports=M(f);var{MEAD_MENTOR_ROLE_ID:l=""}=process.env,u=e=>{let s=e.guild?.roles.cache.get(l)?.members?.map(t=>t.displayName).reduce((t,r)=>t+=`- ${r}
+`,`
+`);if(!s)return e.channel.send("No mead mentors found.");e.channel.send(`The current Mead Mentors: ${s}`)},p=u;
