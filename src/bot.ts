@@ -130,7 +130,8 @@ Suspicious content can be viewed here ${message.url}`;
   if (msgEquals("!meadtools")) return meadTools(message);
   if (msgEquals("!arglist")) return listArgs(message);
   // listed commands
-  if (msgEquals(rankCommand)) return handleRoleCommands(msg, message, member);
+  if (msgEquals(rankCommand) || msgEquals("!rank"))
+    return handleRoleCommands(msg, message, member);
   return handleCommands(msg, message);
 });
 
