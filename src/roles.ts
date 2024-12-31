@@ -1,7 +1,7 @@
 import { Message, TextChannel } from "discord.js";
 
 export const rankCommand = "?rank ";
-const RANK_CHANNEL = "1251354304074223666";
+const RANK_CHANNEL = "1322772543962349670";
 
 const protectedRoles = [
   "@everyone",
