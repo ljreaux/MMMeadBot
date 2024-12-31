@@ -73,7 +73,7 @@ const beginnerMessage =
 const fallbackMessage =
   "Keep brewing! Every batch is a step closer to mastery!";
 
-export const handleRoleCommands = (
+export const handleRoleCommands = async (
   msg: string,
   message: Message,
   member: Message["member"]
@@ -87,6 +87,20 @@ export const handleRoleCommands = (
 
   // requested role (strip command and normalize input)
   let rank = msg.substring(rankCommand.length).trim();
+
+  // Block attempts to ping @everyone, @here, or other roles
+  if (
+    rank.toLowerCase().includes("every") ||
+    rank.toLowerCase().includes("@")
+  ) {
+    return message.channel.send(`Nice try. No ping for you.`);
+  }
+  // Check for unauthorized roles first
+  if (isUnauthorized(rank)) {
+    return message.channel.send(
+      `You are in this discord server, but we do not grant you the rank of ${rank}`
+    );
+  }
 
   // Special handling for "beginner" rank
   if (rank.toLowerCase() === "beginner") {
@@ -118,35 +132,7 @@ export const handleRoleCommands = (
   // Normalize numeric rank input (e.g., "10 meads" or "10 Mead")
   rank = rank.replace(/meads?/i, "").trim();
 
-  // prevent from assigning privileged roles
-  if (isUnauthorized(rank))
-    return message.channel.send(
-      `You are in this discord server, but we do not grant you the rank of ${rank}`
-    );
-
-  // looks for requested role in list
-  const role = message.guild?.roles.cache.find((r) => {
-    if (rank === "10") rank = "10 ";
-    if (rank.length === 1) rank += " ";
-    return (
-      r.name.toLowerCase() === rank.toLowerCase() ||
-      r.name.toLowerCase().startsWith(rank.toLowerCase())
-    );
-  });
-
-  if (!role)
-    return message.channel.send(`The role "${rank}" is not a valid role.`);
-
-  // removes other mead community roles
-  memberRoles?.forEach((r) => member?.roles.remove(r.id));
-
-  member?.roles.add(role.id);
-
-  const rank_up = message.guild?.channels.cache.get(
-    RANK_CHANNEL
-  ) as TextChannel;
-
-  // Extract numeric rank from input
+  // Extract numeric rank
   const numericRank = parseInt(rank, 10);
 
   if (isNaN(numericRank)) {
@@ -154,6 +140,31 @@ export const handleRoleCommands = (
       `The rank "${rank}" is not a valid format (e.g., "10" or "10 meads").`
     );
   }
+
+  // Look for the exact role by matching the numeric part
+  const role = message.guild?.roles.cache.find((r) => {
+    // Extract the numeric part of the role name for comparison
+    const roleNumericMatch = r.name.match(/^(\d+)\s*Meads?$/i);
+    const roleNumeric = roleNumericMatch
+      ? parseInt(roleNumericMatch[1], 10)
+      : null;
+
+    // Check for an exact numeric match
+    return roleNumeric === numericRank;
+  });
+
+  if (!role) {
+    return message.channel.send(`The role "${rank}" is not a valid role.`);
+  }
+
+  // Remove other mead-related roles
+  memberRoles?.forEach((r) => member?.roles.remove(r.id));
+
+  member?.roles.add(role.id);
+
+  const rank_up = message.guild?.channels.cache.get(
+    RANK_CHANNEL
+  ) as TextChannel;
 
   let rankUpMessage = rankUpMessages[numericRank];
 
