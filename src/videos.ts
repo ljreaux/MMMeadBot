@@ -7,8 +7,9 @@ export interface RecipeType {
 
 export const getVideos = async () => await Video.find();
 
-export const handleVideos = async (msg: string, message: Message) => {
+export const handleVideos = async (message: Message) => {
   const videos = await getVideos();
+  const msg = message.content;
   const [, video] = msg.split(" ");
   if (!video) return;
 

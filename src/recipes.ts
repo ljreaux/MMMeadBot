@@ -8,8 +8,9 @@ export interface RecipeType {
 
 export const getRecipes = async () => await Recipe.find();
 
-export const handleRecipeCommands = async (msg: string, message: Message) => {
+export const handleRecipeCommands = async (message: Message) => {
   const recipes = await getRecipes();
+  const msg = message.content;
   const [, recipe] = msg.split(" ");
 
   if (!recipe) return;

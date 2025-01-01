@@ -15,7 +15,8 @@ const isAdmin = (message: Message) => {
   );
 };
 
-export const kickOrBanUser = (message: Message, msg: string) => {
+export const kickOrBanUser = (message: Message) => {
+  const msg = message.content;
   const kickOrBan = msg.includes("kick") ? "kick" : "ban";
   if (!isAdmin(message))
     return message.channel.send("Nice try, but you don't have the power");
@@ -54,13 +55,12 @@ export const autoMod = (message: Message) => {
   return false;
 };
 
-export const sendBotMessage = async (
-  message: Message,
-  getChannel: (channel: string) => TextChannel
-) => {
+export const sendBotMessage = async (message: Message) => {
   if (!isAdmin(message))
     return message.channel.send("Nice try, but you don't have the power");
 
+  const getChannel = (channel: string) =>
+    message.client.channels.cache.get(channel) as TextChannel;
   const [, channel, ...msgArr] = message.content.split(/[ ,]+/);
   const channelId = channel.slice(2, channel.length - 1);
   const cnl = getChannel(channelId);

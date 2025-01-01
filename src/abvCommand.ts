@@ -15,7 +15,8 @@ export const getAbv = (OG: number, FG: number) => {
   return [delle, ABV];
 };
 
-export const handleAbvCommands = (msg: string, message: Message) => {
+export const handleAbvCommands = (message: Message) => {
+  const msg = message.content;
   const [, first, second] = msg.split(" ");
   const [OG, FG] = [Number(first), Number(second) || 0.996];
   const areInvalid = () => {
