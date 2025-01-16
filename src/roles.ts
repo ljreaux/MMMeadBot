@@ -81,7 +81,7 @@ export const handleRoleCommands = async (
   // gets members current roles
   const memberRoles = member?.roles.cache.filter(
     (r) =>
-      r.name.toLowerCase().includes("mead") ||
+      r.name.toLowerCase().includes("meads") ||
       r.name.toLowerCase() === "beginner"
   );
 
