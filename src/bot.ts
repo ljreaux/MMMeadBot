@@ -54,7 +54,7 @@ cron.schedule("0 2 * * *", async () => {
 cron.schedule("*/5 * * * *", async () => await checkVideos(client));
 
 cron.schedule("0 * * * *", async () => {
-  const randomChance = Math.random() * 30;
+  const randomChance = Math.random() * 50;
   if (randomChance <= 1) {
     tagFunPants(client);
   }
