@@ -35,6 +35,7 @@ const argsWithBaseUrl = [
   { arg: "priming", link: "/extra-calcs/priming-sugar" },
   { arg: "juice", link: "/juice" },
   { arg: "yeast", link: "/yeast" },
+  { arg: "tutorial", link: "/tutorial" },
 ].map((arg) => ({
   ...arg,
   link: `${BASE_URL}${arg.link}`,
