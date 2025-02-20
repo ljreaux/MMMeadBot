@@ -60,15 +60,6 @@ cron.schedule("0 * * * *", async () => {
   }
 });
 
-// testing code for funpants
-// setInterval(async () => {
-//   try {
-//     await tagFunPants(client);
-//   } catch (err) {
-//     console.error("Error running tagFunPants on interval", err);
-//   }
-// }, 30000);
-
 client.login(token);
 client.once(Events.ClientReady, async (readyClient) => {
   await dbConnect();

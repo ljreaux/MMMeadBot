@@ -44,3 +44,29 @@ export const handleAbvCommands = (message: Message) => {
 
   return message.channel.send(response);
 };
+
+export const handleDelleCommand = (message: Message) => {
+  const msg = message.content;
+  const [, abv, fg] = msg.split(" ");
+
+  const ABV = parseFloat(abv);
+  const FG = parseFloat(fg);
+
+  if (isNaN(ABV) || isNaN(FG)) {
+    return message.channel.send(`Please enter a valid ABV and FG.`);
+  }
+
+  if (ABV > 23) {
+    return message.channel.send(`The ABV provided is too high.`);
+  }
+
+  const delle = Math.round(toBrix(FG) + 4.5 * ABV);
+  const isStable = delle >= 73;
+
+  const response = `**${ABV.toFixed(2)}%** ABV and a final gravity of **${FG.toFixed(3)}** will give you **${delle} delle units**.\n`;
+  const stability = isStable
+    ? "Your brew is likely stable without chemical stabilizers."
+    : "Your brew will need stabilizers to prevent refermentation.";
+
+  return message.channel.send(response + stability);
+};

@@ -1,5 +1,5 @@
 import { handleRecipeCommands } from "../recipes";
-import { handleAbvCommands } from "../abvCommand";
+import { handleAbvCommands, handleDelleCommand } from "../abvCommand";
 import {
   kickOrBanUser,
   listAdminCommands,
@@ -19,6 +19,7 @@ export const hiddenCommands = [
   { command: "!recipes", func: handleRecipeCommands },
   { command: "!video", func: handleVideos },
   { command: "!abv", func: handleAbvCommands },
+  { command: "!delle", func: handleDelleCommand },
   { command: "?registerVideo", func: registerVideo },
   { command: "!adminlist", func: listAdminCommands },
   { command: "!meadtools", func: meadTools },
