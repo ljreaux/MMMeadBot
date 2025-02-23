@@ -1,5 +1,6 @@
 import { Message, PermissionsBitField, TextChannel } from "discord.js";
 import Video from "./models/videos.js";
+import { fetchCloudinaryImages, writeToDv10 } from "./writeToDv10.js";
 const minutes = 15;
 
 const sketchyPhrases: (string | RegExp)[] = ["@everyone", "@here"];
@@ -108,6 +109,14 @@ export const registerVideo = async (message: Message) => {
   return message.channel.send("Something went wrong.");
 };
 
+export const refreshDv10 = async (message: Message) => {
+  if (!isAdmin(message))
+    return message.channel.send("Nice try, but you don't have the power");
+  const images = await fetchCloudinaryImages();
+  await writeToDv10(images);
+  return message.channel.send("DV10 file has been refreshed.");
+};
+
 export const listAdminCommands = (message: Message) => {
   if (!isAdmin(message)) return;
 
@@ -120,5 +129,7 @@ export const listAdminCommands = (message: Message) => {
   - \`#channel-name\`
   - Your Message
 5. To add new commands visit the [admin dashboard.](https://mmmeadbot-admin-dashboard.vercel.app/)
+6. To refresh the DV10 file, use the command:
+  - \`!refreshDv10\`
    `);
 };
