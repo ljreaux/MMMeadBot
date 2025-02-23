@@ -4,46 +4,44 @@ const BASE_URL = "https://meadtools.com";
 
 const nuteArgs = ["nutes", "nutrients", "nuteCalc"].map((arg) => ({
   arg,
-  link: "/NuteCalc",
+  link: "/nute-calc",
 }));
 
 const extraCalcsArgs = [
-  "brixCalc",
-  "estOG",
-  "benchTrials",
+  "brix",
+  "estimated-og",
+  "bench-trials",
   "sulfite",
   "sorbate",
-  "RefractometerCorrection",
-  "tempCorrection",
+  "refractometer-correction",
+  "temperature-correction",
   "blending",
+  "priming-sugar",
 ].map((arg) => ({
   arg,
-  link: `/ExtraCalcs/${arg}`,
+  link: `/extra-calcs/${arg}`,
 }));
 
 const argsWithBaseUrl = [
   ...nuteArgs,
   ...extraCalcsArgs,
   { arg: "stabilizers", link: "/stabilizers" },
-  { arg: "abv", link: "/ExtraCalcs" },
-  { arg: "brix", link: "/ExtraCalcs/brixCalc" },
-  { arg: "temp", link: "/ExtraCalcs/tempCorrection" },
-  { arg: "refractometer", link: "/ExtraCalcs/RefractometerCorrection" },
-  { arg: "estimatedOG", link: "/ExtraCalcs/estOG" },
-  { arg: "trials", link: "/ExtraCalcs/benchTrials" },
+  { arg: "abv", link: "/extra-calcs" },
+  { arg: "brix", link: "/extra-calcs/brix" },
+  { arg: "temp", link: "/extra-calcs/temperature-correction" },
+  { arg: "refractometer", link: "/extra-calcs/refractometer-correction" },
+  { arg: "estimatedOG", link: "/extra-calcs/estimated-og" },
+  { arg: "trials", link: "/extra-calcs/bench-trials" },
+  { arg: "priming", link: "/extra-calcs/priming-sugar" },
   { arg: "juice", link: "/juice" },
+  { arg: "yeast", link: "/yeast" },
+  { arg: "tutorial", link: "/tutorial" },
 ].map((arg) => ({
   ...arg,
   link: `${BASE_URL}${arg.link}`,
 }));
 
-const VALID_ARGS = [
-  ...argsWithBaseUrl,
-  {
-    arg: "yeast",
-    link: "https://yeasts.meadtools.com",
-  },
-];
+const VALID_ARGS = [...argsWithBaseUrl];
 
 export const meadTools = (message: Message) => {
   const baseResponse = `[Calculator](<https://meadtools.com/>)
