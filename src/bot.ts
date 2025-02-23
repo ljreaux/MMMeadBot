@@ -30,6 +30,7 @@ import checkVideos from "./checkVideos";
 import tagFunPants from "./tagFunpants";
 import { hiddenCommands } from "./utils/hiddenCommands";
 import { autoMod, sendBotMessage } from "./modCommands";
+import { fetchCloudinaryImages, writeToDv10 } from "./writeToDv10";
 
 const client = new Client({
   intents: [
@@ -60,6 +61,12 @@ cron.schedule("0 * * * *", async () => {
   }
 });
 
+cron.schedule("0 0 * * 0", async () => {
+  const images = await fetchCloudinaryImages();
+  await writeToDv10(images);
+  console.log("Image links saved successfully.");
+});
+
 client.login(token);
 client.once(Events.ClientReady, async (readyClient) => {
   await dbConnect();
@@ -73,7 +80,8 @@ client.on("messageCreate", async (message: Message) => {
 
   const msg = message.content;
   const { member } = message;
-  const msgEquals = (param: string) => msg.toLowerCase().startsWith(param);
+  const msgEquals = (param: string) =>
+    msg.toLowerCase().startsWith(param.toLowerCase());
 
   if (msgEquals(`<@${clientId}>`)) sendBotMessage(message);
 
