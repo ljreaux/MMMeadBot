@@ -1,3 +1,4 @@
+import fs from "fs";
 const backendUrl = "https://cloudinary-dv10-api.vercel.app/api/list-media";
 
 export const fetchCloudinaryImages = async (): Promise<string[]> => {
@@ -18,9 +19,29 @@ export const fetchCloudinaryImages = async (): Promise<string[]> => {
   }
 };
 
+export const writeToDv10 = async (arr: string[]) => {
+  try {
+    const fileString = arr.join("\n");
+    fs.writeFileSync("images.txt", fileString);
+    console.log("Images written to images.txt");
+  } catch (err) {
+    console.error("Error writing to file:", err);
+  }
+};
+
+const getDv10List = () => {
+  try {
+    const data = fs.readFileSync("images.txt", "utf8").split("\n");
+    return data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
 export const dv10 = async (): Promise<string> => {
   try {
-    const images = await fetchCloudinaryImages();
+    const images = getDv10List();
 
     if (images.length) {
       return images[Math.floor(Math.random() * images.length)];

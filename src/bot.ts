@@ -30,6 +30,7 @@ import checkVideos from "./checkVideos";
 import tagFunPants from "./tagFunpants";
 import { hiddenCommands } from "./utils/hiddenCommands";
 import { autoMod, sendBotMessage } from "./modCommands";
+import { fetchCloudinaryImages, writeToDv10 } from "./writeToDv10";
 
 const client = new Client({
   intents: [
@@ -60,14 +61,11 @@ cron.schedule("0 * * * *", async () => {
   }
 });
 
-// testing code for funpants
-// setInterval(async () => {
-//   try {
-//     await tagFunPants(client);
-//   } catch (err) {
-//     console.error("Error running tagFunPants on interval", err);
-//   }
-// }, 30000);
+cron.schedule("0 0 * * 0", async () => {
+  const images = await fetchCloudinaryImages();
+  await writeToDv10(images);
+  console.log("Image links saved successfully.");
+});
 
 client.login(token);
 client.once(Events.ClientReady, async (readyClient) => {
@@ -82,7 +80,8 @@ client.on("messageCreate", async (message: Message) => {
 
   const msg = message.content;
   const { member } = message;
-  const msgEquals = (param: string) => msg.toLowerCase().startsWith(param);
+  const msgEquals = (param: string) =>
+    msg.toLowerCase().startsWith(param.toLowerCase());
 
   if (msgEquals(`<@${clientId}>`)) sendBotMessage(message);
 
