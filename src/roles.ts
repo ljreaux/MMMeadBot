@@ -65,6 +65,11 @@ const rankUpMessages: Record<number, string> = {
   450: "450 meads! Absolutely incredible. Are you planning any big celebrations or milestones for the 500 mark?",
 };
 
+const jokeRanks: Record<number, string> = {
+  69: "Nice\n||Still not a valid role though.||",
+  420: "Nice try. This isn’t *that* kind of server.",
+};
+
 // Beginner message
 const beginnerMessage =
   "Welcome to the world of mead-making! Start your journey with your first brew!";
@@ -154,6 +159,9 @@ export const handleRoleCommands = async (
   });
 
   if (!role) {
+    if (jokeRanks[numericRank]) {
+      return message.channel.send(jokeRanks[numericRank]);
+    }
     return message.channel.send(`The role "${rank}" is not a valid role.`);
   }
 
