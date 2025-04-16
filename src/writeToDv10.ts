@@ -1,7 +1,10 @@
 import fs from "fs";
-const backendUrl = "https://cloudinary-dv10-api.vercel.app/api/list-media";
+export const dv10Url = "https://cloudinary-dv10-api.vercel.app/api/list-media";
+export const shadowHiveUrl = "https://shadowhive-api.vercel.app/api/list-media";
 
-export const fetchCloudinaryImages = async (): Promise<string[]> => {
+export const fetchCloudinaryImages = async (
+  backendUrl: string
+): Promise<string[]> => {
   try {
     const response = await fetch(backendUrl);
     if (!response.ok) {
@@ -19,19 +22,19 @@ export const fetchCloudinaryImages = async (): Promise<string[]> => {
   }
 };
 
-export const writeToDv10 = async (arr: string[]) => {
+export const writeToTextFile = async (arr: string[], fileName: string) => {
   try {
     const fileString = arr.join("\n");
-    fs.writeFileSync("images.txt", fileString);
-    console.log("Images written to images.txt");
+    fs.writeFileSync(fileName, fileString);
+    console.log(`Images written to ${fileName}`);
   } catch (err) {
     console.error("Error writing to file:", err);
   }
 };
 
-const getDv10List = () => {
+const getImageList = (fileName: string) => {
   try {
-    const data = fs.readFileSync("images.txt", "utf8").split("\n");
+    const data = fs.readFileSync(fileName, "utf8").split("\n");
     return data;
   } catch (err) {
     console.error(err);
@@ -39,9 +42,9 @@ const getDv10List = () => {
   }
 };
 
-export const dv10 = async (): Promise<string> => {
+export const fetchMemes = async (fileName: string): Promise<string> => {
   try {
-    const images = getDv10List();
+    const images = getImageList(fileName);
 
     if (images.length) {
       return images[Math.floor(Math.random() * images.length)];

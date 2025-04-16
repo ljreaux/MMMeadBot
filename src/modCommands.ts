@@ -1,6 +1,11 @@
 import { Message, PermissionsBitField, TextChannel } from "discord.js";
 import Video from "./models/videos.js";
-import { fetchCloudinaryImages, writeToDv10 } from "./writeToDv10.js";
+import {
+  dv10Url,
+  fetchCloudinaryImages,
+  shadowHiveUrl,
+  writeToTextFile,
+} from "./writeToDv10.js";
 const minutes = 15;
 
 const sketchyPhrases: (string | RegExp)[] = ["@everyone", "@here"];
@@ -112,9 +117,17 @@ export const registerVideo = async (message: Message) => {
 export const refreshDv10 = async (message: Message) => {
   if (!isAdmin(message))
     return message.channel.send("Nice try, but you don't have the power");
-  const images = await fetchCloudinaryImages();
-  await writeToDv10(images);
+  const images = await fetchCloudinaryImages(dv10Url);
+  await writeToTextFile(images, "images.txt");
   return message.channel.send("DV10 file has been refreshed.");
+};
+
+export const refreshShadowHive = async (message: Message) => {
+  if (!isAdmin(message))
+    return message.channel.send("Nice try, but you don't have the power");
+  const images = await fetchCloudinaryImages(shadowHiveUrl);
+  await writeToTextFile(images, "shadowhive.txt");
+  return message.channel.send("Shadowhive file has been refreshed.");
 };
 
 export const listAdminCommands = (message: Message) => {

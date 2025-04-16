@@ -30,7 +30,12 @@ import checkVideos from "./checkVideos";
 import tagFunPants from "./tagFunpants";
 import { hiddenCommands } from "./utils/hiddenCommands";
 import { autoMod, sendBotMessage } from "./modCommands";
-import { fetchCloudinaryImages, writeToDv10 } from "./writeToDv10";
+import {
+  dv10Url,
+  fetchCloudinaryImages,
+  shadowHiveUrl,
+  writeToTextFile,
+} from "./writeToDv10";
 
 const client = new Client({
   intents: [
@@ -62,8 +67,10 @@ cron.schedule("0 * * * *", async () => {
 });
 
 cron.schedule("0 0 * * 0", async () => {
-  const images = await fetchCloudinaryImages();
-  await writeToDv10(images);
+  const images = await fetchCloudinaryImages(dv10Url);
+  const shadowhiveImages = await fetchCloudinaryImages(shadowHiveUrl);
+  await writeToTextFile(images, "images.txt");
+  await writeToTextFile(shadowhiveImages, "shadowhive.txt");
   console.log("Image links saved successfully.");
 });
 

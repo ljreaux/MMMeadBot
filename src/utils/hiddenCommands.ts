@@ -4,12 +4,13 @@ import {
   kickOrBanUser,
   listAdminCommands,
   refreshDv10,
+  refreshShadowHive,
   registerVideo,
 } from "../modCommands";
 
 import { handleVideos } from "../videos";
 import avocadoImg from "../avocado";
-import { dv10 } from "../writeToDv10";
+import { fetchMemes } from "../writeToDv10";
 import { listArgs, meadTools } from "../meadTools";
 import meadMentorsList from "../meadMentors";
 import { Message } from "discord.js";
@@ -23,6 +24,7 @@ export const hiddenCommands = [
   { command: "!delle", func: handleDelleCommand },
   { command: "?registerVideo", func: registerVideo },
   { command: "!refreshImages", func: refreshDv10 },
+  { command: "!refreshShadowHive", func: refreshShadowHive },
   { command: "!adminlist", func: listAdminCommands },
   { command: "!meadtools", func: meadTools },
   { command: "!arglist", func: listArgs },
@@ -48,7 +50,13 @@ export const hiddenCommands = [
   {
     command: "!dv10",
     func: async (message: Message) => {
-      return message.channel.send(await dv10());
+      return message.channel.send(await fetchMemes("images.txt"));
+    },
+  },
+  {
+    command: "!shadowhive",
+    func: async (message: Message) => {
+      return message.channel.send(await fetchMemes("shadowhive.txt"));
     },
   },
 ];
