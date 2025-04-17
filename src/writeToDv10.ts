@@ -47,7 +47,12 @@ export const fetchMemes = async (fileName: string): Promise<string> => {
     const images = getImageList(fileName);
 
     if (images.length) {
-      return images[Math.floor(Math.random() * images.length)];
+      const randomNum = Math.floor(Math.random() * images.length);
+      const randomImg = images[randomNum];
+
+      if (!randomImg) throw new Error("File error.");
+
+      return randomImg;
     } else {
       throw new Error("No images found in the Cloudinary folder.");
     }
