@@ -1,8 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# Run the build script
-npm run build
-
-# Stage the newly built files
-git add dist/

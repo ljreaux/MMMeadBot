@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 
 const { MEAD_MENTOR_ROLE_ID = "" } = process.env;
 const meadMentorsList = (message: Message) => {
@@ -7,8 +7,9 @@ const meadMentorsList = (message: Message) => {
   const names = membersList
     ?.map((val) => val.displayName)
     .reduce((acc, val) => (acc += `- ${val}\n`), "\n");
-  if (!names) return message.channel.send("No mead mentors found.");
-  message.channel.send(`The current Mead Mentors: ${names}`);
+  if (!names)
+    return (message.channel as TextChannel).send("No mead mentors found.");
+  (message.channel as TextChannel).send(`The current Mead Mentors: ${names}`);
 };
 
 export default meadMentorsList;

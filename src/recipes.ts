@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import Recipe from "./models/recipes";
 
 export interface RecipeType {
@@ -17,10 +17,12 @@ export const handleRecipeCommands = async (message: Message) => {
   const recipeString = recipe?.toLowerCase() || "";
   const foundRecipe = recipes.find((r) => r.name === recipeString);
   if (foundRecipe) {
-    message.channel.send(foundRecipe.link);
+    (message.channel as TextChannel).send(foundRecipe.link);
     return;
   } else if (recipe) {
-    message.channel.send(`The recipe ${recipe} is not a valid recipe command.`);
+    (message.channel as TextChannel).send(
+      `The recipe ${recipe} is not a valid recipe command.`
+    );
     return;
   }
 };

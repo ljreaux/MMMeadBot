@@ -1,7 +1,4 @@
 import mongoose, { Mongoose } from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
-
 const MONGODB_URI = process.env.MONGO_URI;
 
 declare global {

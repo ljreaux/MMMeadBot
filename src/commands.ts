@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import Command from "./models/commands";
 import { getRecipes } from "./recipes";
 
@@ -56,7 +56,7 @@ export const handleCommands = async (msg: string, message: Message) => {
 
       if (msg === "!recipes") option.response += ` \n- ${recipesString}`;
 
-      message.channel
+      (message.channel as TextChannel)
         .send(option.response)
         .catch((error) => console.error(error));
     }
@@ -74,6 +74,8 @@ export const handleCommands = async (msg: string, message: Message) => {
     const formattedList = `${commandListHeader}${commandList}`;
     const patched = formattedList.replaceAll(",", "");
 
-    return message.channel.send(patched).catch((error) => console.error(error));
+    return (message.channel as TextChannel)
+      .send(patched)
+      .catch((error) => console.error(error));
   }
 };
