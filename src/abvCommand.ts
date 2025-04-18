@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 
 const toBrix = (value: number) =>
   -668.962 + 1262.45 * value - 776.43 * value ** 2 + 182.94 * value ** 3;
@@ -32,7 +32,7 @@ export const handleAbvCommands = (message: Message) => {
   };
 
   if (areInvalid())
-    return message.channel.send(
+    return (message.channel as TextChannel).send(
       "Please enter a valid number for OG and FG. Example: !abv 1.050 1.010"
     );
 
@@ -42,7 +42,7 @@ export const handleAbvCommands = (message: Message) => {
     3
   )} will make ${ABV}% ABV and ${delle} delle units.`;
 
-  return message.channel.send(response);
+  return (message.channel as TextChannel).send(response);
 };
 
 export const handleDelleCommand = (message: Message) => {
@@ -53,11 +53,15 @@ export const handleDelleCommand = (message: Message) => {
   const FG = parseFloat(fg);
 
   if (isNaN(ABV) || isNaN(FG)) {
-    return message.channel.send(`Please enter a valid ABV and FG.`);
+    return (message.channel as TextChannel).send(
+      `Please enter a valid ABV and FG.`
+    );
   }
 
   if (ABV > 23) {
-    return message.channel.send(`The ABV provided is too high.`);
+    return (message.channel as TextChannel).send(
+      `The ABV provided is too high.`
+    );
   }
 
   const delle = Math.round(toBrix(FG) + 4.5 * ABV);
@@ -68,5 +72,5 @@ export const handleDelleCommand = (message: Message) => {
     ? "Your brew is likely stable without chemical stabilizers."
     : "Your brew will need stabilizers to prevent refermentation.";
 
-  return message.channel.send(response + stability);
+  return (message.channel as TextChannel).send(response + stability);
 };

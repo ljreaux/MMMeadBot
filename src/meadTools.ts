@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 
 const BASE_URL = "https://meadtools.com";
 
@@ -56,9 +56,9 @@ Run \`!arglist\`  for a list of arguments
   );
 
   if (foundArg) {
-    return message.channel.send(foundArg.link);
+    return (message.channel as TextChannel).send(foundArg.link);
   } else {
-    return message.channel.send(baseResponse);
+    return (message.channel as TextChannel).send(baseResponse);
   }
 };
 
@@ -73,7 +73,7 @@ export const listArgs = (message: Message) => {
     .join("\n\n");
 
   // Send the formatted message
-  message.channel.send(
+  (message.channel as TextChannel).send(
     `Here are all the available arguments organized by URL path:\n\n${formattedMessage}`
   );
 };

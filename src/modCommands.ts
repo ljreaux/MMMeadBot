@@ -13,10 +13,10 @@ const sketchyPhrases: (string | RegExp)[] = ["@everyone", "@here"];
 const isAdmin = (message: Message) => {
   return (
     message.member
-      ?.permissionsIn(message.channel.id)
+      ?.permissionsIn((message.channel as TextChannel).id)
       .has(PermissionsBitField.Flags.Administrator) ||
     message.member
-      ?.permissionsIn(message.channel.id)
+      ?.permissionsIn((message.channel as TextChannel).id)
       .has(PermissionsBitField.Flags.ModerateMembers)
   );
 };
@@ -25,20 +25,27 @@ export const kickOrBanUser = (message: Message) => {
   const msg = message.content;
   const kickOrBan = msg.includes("kick") ? "kick" : "ban";
   if (!isAdmin(message))
-    return message.channel.send("Nice try, but you don't have the power");
+    return (message.channel as TextChannel).send(
+      "Nice try, but you don't have the power"
+    );
 
   let [, user] = msg.split(" ");
   if (!user)
-    return message.channel.send(`You need to specify a user to ${kickOrBan}.`);
+    return (message.channel as TextChannel).send(
+      `You need to specify a user to ${kickOrBan}.`
+    );
 
   const userToKick = message.mentions.users.first();
 
-  if (!userToKick) return message.channel.send("User not found.");
+  if (!userToKick)
+    return (message.channel as TextChannel).send("User not found.");
 
   if (kickOrBan === "kick") message.guild?.members.kick(userToKick);
   else message.guild?.members.ban(userToKick);
 
-  return message.channel.send(`${userToKick.tag} has been ${kickOrBan}ed.`);
+  return (message.channel as TextChannel).send(
+    `${userToKick.tag} has been ${kickOrBan}ed.`
+  );
 };
 
 export const autoMod = (message: Message) => {
@@ -63,7 +70,9 @@ export const autoMod = (message: Message) => {
 
 export const sendBotMessage = async (message: Message) => {
   if (!isAdmin(message))
-    return message.channel.send("Nice try, but you don't have the power");
+    return (message.channel as TextChannel).send(
+      "Nice try, but you don't have the power"
+    );
 
   const getChannel = (channel: string) =>
     message.client.channels.cache.get(channel) as TextChannel;
@@ -90,13 +99,15 @@ const addVideo = async (post: { command: string; response: string }) => {
 
 export const registerVideo = async (message: Message) => {
   if (!isAdmin(message))
-    return message.channel.send("Nice try, but you don't have the power");
+    return (message.channel as TextChannel).send(
+      "Nice try, but you don't have the power"
+    );
 
   const [, videoCom] = message.content.split(" ");
   const newVid = message.attachments.first();
 
   if (!newVid || !videoCom)
-    return message.channel.send(
+    return (message.channel as TextChannel).send(
       "Please provide a video attachment and command name."
     );
 
@@ -109,31 +120,39 @@ export const registerVideo = async (message: Message) => {
   });
 
   if (newVideo)
-    return message.channel.send(`${videoCom} has been successfully added.`);
+    return (message.channel as TextChannel).send(
+      `${videoCom} has been successfully added.`
+    );
 
-  return message.channel.send("Something went wrong.");
+  return (message.channel as TextChannel).send("Something went wrong.");
 };
 
 export const refreshDv10 = async (message: Message) => {
   if (!isAdmin(message))
-    return message.channel.send("Nice try, but you don't have the power");
+    return (message.channel as TextChannel).send(
+      "Nice try, but you don't have the power"
+    );
   const images = await fetchCloudinaryImages(dv10Url);
   await writeToTextFile(images, "images.txt");
-  return message.channel.send("DV10 file has been refreshed.");
+  return (message.channel as TextChannel).send("DV10 file has been refreshed.");
 };
 
 export const refreshShadowHive = async (message: Message) => {
   if (!isAdmin(message))
-    return message.channel.send("Nice try, but you don't have the power");
+    return (message.channel as TextChannel).send(
+      "Nice try, but you don't have the power"
+    );
   const images = await fetchCloudinaryImages(shadowHiveUrl);
   await writeToTextFile(images, "shadowhive.txt");
-  return message.channel.send("Shadowhive file has been refreshed.");
+  return (message.channel as TextChannel).send(
+    "Shadowhive file has been refreshed."
+  );
 };
 
 export const listAdminCommands = (message: Message) => {
   if (!isAdmin(message)) return;
 
-  return message.channel.send(`Here are all the admin commands:
+  return (message.channel as TextChannel).send(`Here are all the admin commands:
 1. ?kick \`@user\`
 2. ?ban \`@user\`
 3. ?registerVideo \`video name\` (attach video to message)

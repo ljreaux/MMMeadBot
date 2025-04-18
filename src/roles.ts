@@ -98,11 +98,11 @@ export const handleRoleCommands = async (
     rank.toLowerCase().includes("every") ||
     rank.toLowerCase().includes("@")
   ) {
-    return message.channel.send(`Nice try. No ping for you.`);
+    return (message.channel as TextChannel).send(`Nice try. No ping for you.`);
   }
   // Check for unauthorized roles first
   if (isUnauthorized(rank)) {
-    return message.channel.send(
+    return (message.channel as TextChannel).send(
       `You are in this discord server, but we do not grant you the rank of ${rank}`
     );
   }
@@ -113,7 +113,9 @@ export const handleRoleCommands = async (
       (r) => r.name.toLowerCase() === "beginner"
     );
     if (!beginnerRole) {
-      return message.channel.send(`The role "Beginner" is not available.`);
+      return (message.channel as TextChannel).send(
+        `The role "Beginner" is not available.`
+      );
     }
 
     // Remove other mead-related roles
@@ -129,7 +131,7 @@ export const handleRoleCommands = async (
       ?.send(`${message.author.toString()} ${beginnerMessage}`)
       .catch((error) => console.error(error));
 
-    return message.channel
+    return (message.channel as TextChannel)
       .send(`You have been assigned to the "Beginner" role.`)
       .catch((error) => console.error(error));
   }
@@ -141,7 +143,7 @@ export const handleRoleCommands = async (
   const numericRank = parseInt(rank, 10);
 
   if (isNaN(numericRank)) {
-    return message.channel.send(
+    return (message.channel as TextChannel).send(
       `The rank "${rank}" is not a valid format (e.g., "10" or "10 meads").`
     );
   }
@@ -160,9 +162,11 @@ export const handleRoleCommands = async (
 
   if (!role) {
     if (jokeRanks[numericRank]) {
-      return message.channel.send(jokeRanks[numericRank]);
+      return (message.channel as TextChannel).send(jokeRanks[numericRank]);
     }
-    return message.channel.send(`The role "${rank}" is not a valid role.`);
+    return (message.channel as TextChannel).send(
+      `The role "${rank}" is not a valid role.`
+    );
   }
 
   // Remove other mead-related roles
@@ -186,7 +190,7 @@ export const handleRoleCommands = async (
     ?.send(`${message.author.toString()} ${rankUpMessage}`)
     .catch((error) => console.error(error));
 
-  return message.channel
+  return (message.channel as TextChannel)
     .send(`You have been assigned to role "${role.name}"`)
     .catch((error) => console.error(error));
 };

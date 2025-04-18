@@ -13,7 +13,7 @@ import avocadoImg from "../avocado";
 import { fetchMemes } from "../writeToDv10";
 import { listArgs, meadTools } from "../meadTools";
 import meadMentorsList from "../meadMentors";
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 
 export const hiddenCommands = [
   { command: "?kick", func: kickOrBanUser },
@@ -32,31 +32,37 @@ export const hiddenCommands = [
   {
     command: "!flip",
     func: (message: Message) => {
-      return message.channel.send("🚫 No flips allowed! 🚫");
+      return (message.channel as TextChannel).send("🚫 No flips allowed! 🚫");
     },
   },
   {
     command: "!bakingsoda",
     func: (message: Message) => {
-      return message.channel.send("Baking soda is not a mead ingredient!!");
+      return (message.channel as TextChannel).send(
+        "Baking soda is not a mead ingredient!!"
+      );
     },
   },
   {
     command: "!avocadohoney",
     func: (message: Message) => {
-      return message.channel.send(avocadoImg());
+      return (message.channel as TextChannel).send(avocadoImg());
     },
   },
   {
     command: "!dv10",
     func: async (message: Message) => {
-      return message.channel.send(await fetchMemes("images.txt"));
+      return (message.channel as TextChannel).send(
+        await fetchMemes("images.txt")
+      );
     },
   },
   {
     command: "!shadowhive",
     func: async (message: Message) => {
-      return message.channel.send(await fetchMemes("shadowhive.txt"));
+      return (message.channel as TextChannel).send(
+        await fetchMemes("shadowhive.txt")
+      );
     },
   },
 ];
