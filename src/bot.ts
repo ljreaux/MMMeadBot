@@ -35,6 +35,8 @@ import {
   writeToTextFile,
 } from "./writeToDv10";
 
+import { botherJake } from "./botherJake";
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -71,6 +73,16 @@ cron.schedule("0 0 * * 0", async () => {
   await writeToTextFile(shadowhiveImages, "shadowhive.txt");
   console.log("Image links saved successfully.");
 });
+
+cron.schedule(
+  "0 15 */5 * *",
+  () => {
+    botherJake(client);
+  },
+  {
+    timezone: "America/Chicago",
+  }
+);
 
 client.login(token);
 client.once(Events.ClientReady, async (readyClient) => {
