@@ -128,7 +128,7 @@ client.on("guildMemberAdd", (member) => {
 
   const channel = getTextChannel(welcomeChannel);
 
-  const welcomeMessage = `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank (rank)** to receive a rank.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`;
+  const welcomeMessage = `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank** followed by one of the available ranks. To find a list run **!listranks**.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`;
 
   channel.send(welcomeMessage);
 });

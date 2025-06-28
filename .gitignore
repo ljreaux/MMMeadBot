@@ -7,3 +7,5 @@ sshkey
 sshkey.pub
 images.txt
 shadowhive.txt
+
+.DS_Store
