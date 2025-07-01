@@ -35,7 +35,7 @@ import {
   writeToTextFile,
 } from "./writeToDv10";
 
-import { botherJake } from "./botherJake";
+// import { botherJake } from "./botherJake";
 
 const client = new Client({
   intents: [
@@ -74,15 +74,15 @@ cron.schedule("0 0 * * 0", async () => {
   console.log("Image links saved successfully.");
 });
 
-cron.schedule(
-  "0 15 */5 * *",
-  () => {
-    botherJake(client);
-  },
-  {
-    timezone: "America/Chicago",
-  }
-);
+// cron.schedule(
+//   "0 15 */5 * *",
+//   () => {
+//     botherJake(client);
+//   },
+//   {
+//     timezone: "America/Chicago",
+//   }
+// );
 
 client.login(token);
 client.once(Events.ClientReady, async (readyClient) => {
