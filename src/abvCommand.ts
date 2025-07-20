@@ -47,6 +47,7 @@ export const handleAbvCommands = (message: Message) => {
 
 export const handleDelleCommand = (message: Message) => {
   const msg = message.content;
+  if (msg.includes("chart")) return;
   const [, abv, fg] = msg.split(" ");
 
   const ABV = parseFloat(abv);
