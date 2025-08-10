@@ -1,9 +1,9 @@
 import { Client, EmbedBuilder, TextChannel } from "discord.js";
 import Parser from "rss-parser";
-import NewVideo from "./models/newVideo";
+import NewVideo from "../models/newVideo";
 
 const parser = new Parser();
-const { YOUTUBE_XML_URL, youtubeShenanigans, guildId } = process.env;
+const { YOUTUBE_XML_URL, YOUTUBE_SHENANIGANS, GUILD_ID } = process.env;
 
 // Helper to parse pubDate and check recency
 function isRecent(pubDate: string, maxAgeMinutes = 60) {
@@ -14,10 +14,11 @@ function isRecent(pubDate: string, maxAgeMinutes = 60) {
 
 export default async function checkVideos(client: Client) {
   try {
-    if (!YOUTUBE_XML_URL || !youtubeShenanigans || !guildId) throw new Error();
-    const guild = await client.guilds.fetch(guildId);
+    if (!YOUTUBE_XML_URL || !YOUTUBE_SHENANIGANS || !GUILD_ID)
+      throw new Error();
+    const guild = await client.guilds.fetch(GUILD_ID);
     const channel = (await guild.channels.fetch(
-      youtubeShenanigans
+      YOUTUBE_SHENANIGANS
     )) as TextChannel;
 
     const data = await parser.parseURL(YOUTUBE_XML_URL);

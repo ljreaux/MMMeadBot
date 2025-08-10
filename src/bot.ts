@@ -1,4 +1,3 @@
-import "./utils/groupByPolyfill"; // Import the polyfill
 import {
   Client,
   Events,
@@ -6,37 +5,41 @@ import {
   Message,
   TextChannel,
 } from "discord.js";
-
-const {
-  token,
-  clientId,
-  welcomeChannel = "",
-  botSpamChannel = "",
-  generalChannel = "",
-  adminChannel = "",
-} = process.env;
-
-import dbConnect from "./lib/db";
-import { handleCommands } from "./commands";
-
-import { handleRoleCommands, rankCommand } from "./roles";
-import { assignTempRole, checkRoles, getUserRoles } from "./tempUserRoles";
-
 import cron from "node-cron";
-import { handleHooligans } from "./bellyPickle";
-import checkVideos from "./checkVideos";
-import tagFunPants from "./tagFunpants";
-import { hiddenCommands } from "./utils/hiddenCommands";
-import { autoMod, sendBotMessage } from "./modCommands";
+import dbConnect from "./lib/db";
+import { buildCommandRegistry, safeReply } from "./commands/slashCommands";
+
+import {
+  assignTempRole,
+  checkRoles,
+  getUserRoles,
+} from "./admin/tempUserRoles";
+import { handleHooligans } from "./utils/bellyPickle";
+import checkVideos from "./utils/checkVideos";
+import tagFunPants from "./utils/tagFunpants";
+import { autoMod } from "./admin/modCommands";
 import {
   dv10Url,
   fetchCloudinaryImages,
   shadowHiveUrl,
   writeToTextFile,
-} from "./writeToDv10";
+} from "./utils/writeToDv10";
+import { reloadCommands } from "./utils/reloadCommands";
 
-// import { botherJake } from "./botherJake";
+const {
+  TOKEN,
+  WELCOME_CHANNEL = "",
+  BOT_SPAM_CHANNEL = "",
+  GENERAL_CHANNEL = "",
+  ADMIN_CHANNEL = "",
+} = process.env;
 
+// Build slash command registry on startup
+const registryPromise = buildCommandRegistry();
+
+const getTextChannel = (channel: string) =>
+  client.channels.cache.get(channel) as TextChannel;
+// discord client handlings
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -47,10 +50,83 @@ const client = new Client({
   ],
 });
 
-const getTextChannel = (channel: string) =>
-  client.channels.cache.get(channel) as TextChannel;
+client.login(TOKEN);
 
-const adminTextChannel = getTextChannel(adminChannel);
+client.once(Events.ClientReady, async (readyClient) => {
+  await dbConnect();
+  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+  await reloadCommands();
+});
+
+client.on(Events.MessageCreate, async (message: Message) => {
+  if (message.author.bot) return;
+
+  handleHooligans(message);
+  // prevents @everyone
+  const sketchy = autoMod(message);
+
+  const { member } = message;
+  const autoModMsg = `
+<@&713811216979591282>
+User ${member?.user} has been flagged for suspicious activity. They have been timed out for 15min. 
+Suspicious content can be viewed here ${message.url}`;
+  const adminTextChannel = getTextChannel(ADMIN_CHANNEL);
+
+  if (sketchy) return adminTextChannel.send(autoModMsg);
+});
+
+client.on(Events.MessageUpdate, (_, newMessage) => handleHooligans(newMessage));
+
+client.on(Events.GuildMemberAdd, (member) => {
+  assignTempRole(member);
+
+  const channel = getTextChannel(WELCOME_CHANNEL);
+
+  const welcomeMessage = `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${BOT_SPAM_CHANNEL}> and run \`/rank\`.\n\nHop on into <#${GENERAL_CHANNEL}> channel and tell us what you're brewing or plan to brew!\n\nRun \`/recipes\` to get one of MMM's recipes.\n\nYou can find a list of all commands by running \`/list\``;
+
+  channel.send(welcomeMessage);
+});
+
+client.on(Events.InteractionCreate, async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+
+  // get cached registry
+  const { commandMap } = await registryPromise;
+
+  const cmd = commandMap[interaction.commandName];
+  if (!cmd) {
+    await safeReply(interaction, "Unknown command.");
+    return;
+  }
+
+  // Permission gate (if set)
+  if (cmd.requiredPermissions) {
+    if (!interaction.inGuild()) {
+      await safeReply(
+        interaction,
+        "This command can only be used in a server."
+      );
+      return;
+    }
+    const member = await interaction.guild!.members.fetch(interaction.user.id);
+    if (!member.permissions.has(cmd.requiredPermissions)) {
+      await safeReply(
+        interaction,
+        "You don’t have permission to use this command."
+      );
+      return;
+    }
+  }
+
+  try {
+    await cmd.fn(interaction);
+  } catch (err) {
+    console.error(err);
+    await safeReply(interaction, "There was an error executing this command.");
+  }
+});
+
+// scheduled events
 
 cron.schedule("0 2 * * *", async () => {
   const roles = await getUserRoles();
@@ -72,63 +148,4 @@ cron.schedule("0 0 * * 0", async () => {
   await writeToTextFile(images, "images.txt");
   await writeToTextFile(shadowhiveImages, "shadowhive.txt");
   console.log("Image links saved successfully.");
-});
-
-// cron.schedule(
-//   "0 15 */5 * *",
-//   () => {
-//     botherJake(client);
-//   },
-//   {
-//     timezone: "America/Chicago",
-//   }
-// );
-
-client.login(token);
-client.once(Events.ClientReady, async (readyClient) => {
-  await dbConnect();
-  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
-
-client.on("messageCreate", async (message: Message) => {
-  if (message.author.bot) return;
-
-  handleHooligans(message);
-
-  const msg = message.content;
-  const { member } = message;
-  const msgEquals = (param: string) =>
-    msg.toLowerCase().startsWith(param.toLowerCase());
-
-  if (msgEquals(`<@${clientId}>`)) sendBotMessage(message);
-
-  // prevents @everyone
-  const sketchy = autoMod(message);
-  const autoModMsg = `
-<@&713811216979591282>
-User ${member?.user} has been flagged for suspicious activity. They have been timed out for 15min. 
-Suspicious content can be viewed here ${message.url}`;
-
-  if (sketchy) return adminTextChannel.send(autoModMsg);
-
-  hiddenCommands.forEach(({ command, func }) => {
-    if (msgEquals(command)) return func(message);
-  });
-
-  // listed commands
-  if (msgEquals(rankCommand) || msgEquals("!rank"))
-    return handleRoleCommands(msg, message, member);
-  return handleCommands(msg, message);
-});
-
-client.on("messageUpdate", (_, newMessage) => handleHooligans(newMessage));
-
-client.on("guildMemberAdd", (member) => {
-  assignTempRole(member);
-
-  const channel = getTextChannel(welcomeChannel);
-
-  const welcomeMessage = `Welcome to the MMM Discord Server <@${member.user.id}>!\n\n Please head over to <#${botSpamChannel}> and run **?rank** followed by one of the available ranks. To find a list run **!listranks**.\n\nHop on into <#${generalChannel}> channel and tell us what you're brewing or plan to brew!\n\nRun **!recipes** to get a list of popular MMM recipes.\n\nYou can find a list of all commands by running **!list**`;
-
-  channel.send(welcomeMessage);
 });
