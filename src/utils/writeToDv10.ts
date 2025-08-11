@@ -42,13 +42,22 @@ const getImageList = (fileName: string) => {
   }
 };
 
-export const fetchMemes = async (fileName: string): Promise<string> => {
+export const fetchMemes = async (
+  fileName: string,
+  num: number | null
+): Promise<string> => {
   try {
     const images = getImageList(fileName);
 
     if (images.length) {
-      const randomNum = Math.floor(Math.random() * images.length);
-      const randomImg = images[randomNum];
+      const randomNum = num ?? Math.floor(Math.random() * images.length);
+      let randomImg: string;
+
+      if (randomNum < images.length) {
+        randomImg = images[randomNum];
+      } else {
+        randomImg = "The image you're looking for does not exist";
+      }
 
       if (!randomImg) throw new Error("File error.");
 

@@ -202,15 +202,33 @@ const builtinCommands: Record<string, Command> = {
   },
   dv10: {
     description: "Get a dv10 image.",
+    options: [
+      {
+        type: ApplicationCommandOptionType.Number,
+        name: "index",
+        description: "The number of image you're looking.",
+        min_value: 0,
+      },
+    ],
     fn: async (i) => {
-      const image = await fetchMemes("images.txt");
+      const index = i.options.getNumber("index");
+      const image = await fetchMemes("images.txt", index);
       await safeReply(i, image);
     },
   },
   shadowhive: {
     description: "Learn about shadowhive.",
+    options: [
+      {
+        type: ApplicationCommandOptionType.Number,
+        name: "index",
+        description: "The number of image you're looking.",
+        min_value: 0,
+      },
+    ],
     fn: async (i) => {
-      const image = await fetchMemes("shadowhive.txt");
+      const index = i.options.getNumber("index");
+      const image = await fetchMemes("shadowhive.txt", index);
       await safeReply(i, "http://www.shadowhive.com\n" + image);
     },
   },
