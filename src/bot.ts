@@ -25,6 +25,7 @@ import {
   writeToTextFile,
 } from "./utils/writeToDv10";
 import { reloadCommands } from "./utils/reloadCommands";
+import { yeastInfoAutocomplete } from "./commands/yeastInfo";
 
 const {
   TOKEN,
@@ -88,6 +89,9 @@ client.on(Events.GuildMemberAdd, (member) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
+  if (interaction.isAutocomplete() && interaction.commandName === "yeastinfo") {
+    return yeastInfoAutocomplete(interaction);
+  }
   if (!interaction.isChatInputCommand()) return;
 
   // get cached registry

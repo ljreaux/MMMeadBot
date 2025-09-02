@@ -22,6 +22,7 @@ import { getCommands, getRecipes, getVideos } from "../utils/dbFunctions";
 import { registervideo } from "./registerVideo";
 import { sendbotmessage } from "../admin/modCommands";
 import { list, listadmin } from "./list";
+import yeastinfo from "./yeastInfo";
 
 // ---------- Utilities ----------
 const sanitizeName = (raw: string) =>
@@ -264,6 +265,7 @@ const builtinCommands: Record<string, Command> = {
       await safeReply(i, `The current Mead Mentors: ${names}`);
     },
   },
+  yeastinfo,
   rank,
   registervideo,
   sendbotmessage,
