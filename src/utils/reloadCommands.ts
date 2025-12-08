@@ -11,7 +11,7 @@ export const reloadCommands = async () => {
     const { commands } = await buildCommandRegistry();
 
     await rest.put(Routes.applicationCommands(APPLICATION_ID), {
-      body: commands,
+      body: commands
     });
 
     console.log("Successfully reloaded application (/) commands.");

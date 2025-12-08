@@ -1,12 +1,13 @@
 import {
+  GuildMemberRoleManager,
   PermissionsBitField,
   type ChatInputCommandInteraction,
-  type PermissionResolvable,
+  type PermissionResolvable
 } from "discord.js";
 import {
   ApplicationCommandOptionType,
   type APIApplicationCommandOption,
-  type RESTPostAPIChatInputApplicationCommandsJSONBody,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody
 } from "discord-api-types/v10";
 import { meadtoolsCommands } from "./meadTools";
 import { getAbv, toBrix } from "../utils/abvCommand";
@@ -14,7 +15,7 @@ import { reloadCommands } from "../utils/reloadCommands";
 import {
   fetchCloudinaryImages,
   fetchMemes,
-  writeToTextFile,
+  writeToTextFile
 } from "../utils/writeToDv10";
 import avocadoImg from "../utils/avocado";
 import { rank } from "./rank-select";
@@ -42,6 +43,25 @@ const resolveDefaultPerms = (p?: PermissionResolvable): string | undefined => {
   if (!p) return undefined;
   // PermissionsBitField.resolve(...) -> bigint; REST expects string
   return PermissionsBitField.resolve(p).toString();
+};
+
+const canUseRefreshMedia = (interaction: ChatInputCommandInteraction) => {
+  // Only makes sense in a guild:
+  if (!interaction.inGuild()) return false;
+
+  const isAdmin = interaction.memberPermissions?.has(
+    PermissionsBitField.Flags.Administrator
+  );
+
+  const roleId = process.env.REFRESH_MEDIA_ROLE_ID;
+  let hasRole = false;
+
+  if (roleId && interaction.member && "roles" in interaction.member) {
+    const roles = interaction.member.roles as GuildMemberRoleManager;
+    hasRole = roles.cache.has(roleId);
+  }
+
+  return Boolean(isAdmin || hasRole);
 };
 
 // ---------- Types ----------
@@ -75,15 +95,15 @@ const builtinCommands: Record<string, Command> = {
         description: "The original gravity of your brew.",
         required: true,
         min_value: 0.98,
-        max_value: 1.2,
+        max_value: 1.2
       },
       {
         type: ApplicationCommandOptionType.Number,
         name: "fg",
         description: "The final gravity of your brew.",
         min_value: 0.98,
-        max_value: 1.2,
-      },
+        max_value: 1.2
+      }
     ],
     fn: async (i) => {
       const og = i.options.getNumber("og", true);
@@ -112,7 +132,7 @@ const builtinCommands: Record<string, Command> = {
           3
         )} yields **${ABV}% ABV** and **${delle} delle units**.`
       );
-    },
+    }
   },
   delle: {
     description: "Calculates delle units from ABV (%) and final gravity (SG).",
@@ -123,7 +143,7 @@ const builtinCommands: Record<string, Command> = {
         description: "Alcohol by volume percentage (e.g., 12.5).",
         required: true,
         min_value: 0,
-        max_value: 23,
+        max_value: 23
       },
       {
         type: ApplicationCommandOptionType.Number,
@@ -131,8 +151,8 @@ const builtinCommands: Record<string, Command> = {
         description: "Final gravity in specific gravity (e.g., 0.996).",
         required: true,
         min_value: 0.98,
-        max_value: 1.2,
-      },
+        max_value: 1.2
+      }
     ],
     fn: async (i) => {
       const abv = i.options.getNumber("abv", true);
@@ -165,41 +185,59 @@ const builtinCommands: Record<string, Command> = {
             ? "Your brew is likely stable without chemical stabilizers."
             : "Your brew will likely need stabilizers to prevent refermentation.")
       );
-    },
+    }
   },
   bakingsoda: {
     description: "Learn about using baking soda in mead making.",
     fn: async (i) => {
       await safeReply(i, "Baking soda is not a mead ingredient!!");
-    },
+    }
   },
   flip: {
     description: "flip",
     fn: async (i) => {
       await safeReply(i, "🚫 No flips allowed! 🚫");
-    },
+    }
   },
   "refresh-dv10": {
     description: "Refreshes the dv10 image folder.",
-    requiredPermissions: "Administrator",
     fn: async (i) => {
+      if (!i.inGuild()) {
+        await safeReply(i, "This command can only be used in a server.");
+        return;
+      }
+
+      if (!canUseRefreshMedia(i)) {
+        await safeReply(i, "You don't have permission to run this command.");
+        return;
+      }
+
       const images = await fetchCloudinaryImages(
         "https://cloudinary-dv10-api.vercel.app/api/list-media"
       );
       await writeToTextFile(images, "images.txt");
       await safeReply(i, "DV10 file has been refreshed.");
-    },
+    }
   },
   "refresh-shadowhive": {
     description: "Refreshes the dv10 image folder.",
-    requiredPermissions: "Administrator",
     fn: async (i) => {
+      if (!i.inGuild()) {
+        await safeReply(i, "This command can only be used in a server.");
+        return;
+      }
+
+      if (!canUseRefreshMedia(i)) {
+        await safeReply(i, "You don't have permission to run this command.");
+        return;
+      }
+
       const images = await fetchCloudinaryImages(
         "https://shadowhive-api.vercel.app/api/list-media"
       );
       await writeToTextFile(images, "shadowhive.txt");
       await safeReply(i, "Shadowhive file has been refreshed.");
-    },
+    }
   },
   dv10: {
     description: "Get a dv10 image.",
@@ -208,14 +246,14 @@ const builtinCommands: Record<string, Command> = {
         type: ApplicationCommandOptionType.Number,
         name: "index",
         description: "The number of image you're looking.",
-        min_value: 0,
-      },
+        min_value: 0
+      }
     ],
     fn: async (i) => {
       const index = i.options.getNumber("index");
       const image = await fetchMemes("images.txt", index);
       await safeReply(i, image);
-    },
+    }
   },
   shadowhive: {
     description: "Learn about shadowhive.",
@@ -224,20 +262,20 @@ const builtinCommands: Record<string, Command> = {
         type: ApplicationCommandOptionType.Number,
         name: "index",
         description: "The number of image you're looking.",
-        min_value: 0,
-      },
+        min_value: 0
+      }
     ],
     fn: async (i) => {
       const index = i.options.getNumber("index");
       const image = await fetchMemes("shadowhive.txt", index);
       await safeReply(i, "http://www.shadowhive.com\n" + image);
-    },
+    }
   },
   avocadohoney: {
     description: "Avocado Honey",
     fn: async (i) => {
       await safeReply(i, avocadoImg());
-    },
+    }
   },
   refreshcommands: {
     description: "Refreshes slash commands.",
@@ -245,7 +283,7 @@ const builtinCommands: Record<string, Command> = {
     fn: async (i) => {
       await reloadCommands();
       await safeReply(i, "Slash commands reloaded ✅");
-    },
+    }
   },
   meadmentorlist: {
     description: "Get a list of the mead mentors.",
@@ -263,7 +301,7 @@ const builtinCommands: Record<string, Command> = {
       }
 
       await safeReply(i, `The current Mead Mentors: ${names}`);
-    },
+    }
   },
   yeastinfo,
   rank,
@@ -271,7 +309,7 @@ const builtinCommands: Record<string, Command> = {
   sendbotmessage,
   list,
   listadmin,
-  ...meadtoolsCommands,
+  ...meadtoolsCommands
 };
 
 // ---------- DB → slash transform ----------
@@ -285,8 +323,8 @@ function dbToSlashEntry(db: DBCommand): [name: string, cmd: Command] {
       description: db.description ?? makeDescription(db.response),
       fn: async (i) => {
         await safeReply(i, db.response);
-      },
-    },
+      }
+    }
   ];
 }
 
@@ -302,7 +340,7 @@ export async function buildCommandRegistry(): Promise<{
   const dbVideos = videos
     .map(({ command, response }) => ({
       response,
-      command: command.replace(/^!video\s*/i, "!"),
+      command: command.replace(/^!video\s*/i, "!")
     }))
     .map(dbToSlashEntry);
 
@@ -318,21 +356,21 @@ export async function buildCommandRegistry(): Promise<{
         required: true,
         choices: recipeList
           .map(({ name, link }) => ({ name, value: link }))
-          .slice(0, 25),
-      },
+          .slice(0, 25)
+      }
     ],
     fn: async (int: ChatInputCommandInteraction) => {
       const url = int.options.getString("recipe", true); // this is already the full URL
 
       await safeReply(int, url);
-    },
+    }
   };
 
   const merged: Record<string, Command> = {
     ...Object.fromEntries(dbEntries),
     ...Object.fromEntries(dbVideos),
     ...builtinCommands,
-    recipes,
+    recipes
   };
 
   // @ts-ignore
@@ -346,11 +384,11 @@ export async function buildCommandRegistry(): Promise<{
         ...(requiredPermissions
           ? {
               default_member_permissions:
-                resolveDefaultPerms(requiredPermissions),
+                resolveDefaultPerms(requiredPermissions)
             }
           : {}),
         // prevent DM usage for permissioned commands
-        ...(requiredPermissions ? { dm_permission: false } : {}),
+        ...(requiredPermissions ? { dm_permission: false } : {})
       })
     );
 
