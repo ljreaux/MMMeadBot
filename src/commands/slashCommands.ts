@@ -24,6 +24,7 @@ import { registervideo } from "./registerVideo";
 import { sendbotmessage } from "../admin/modCommands";
 import { list, listadmin } from "./list";
 import yeastinfo from "./yeastInfo";
+import honey from "./honeyInfo";
 
 // ---------- Utilities ----------
 const sanitizeName = (raw: string) =>
@@ -309,6 +310,7 @@ const builtinCommands: Record<string, Command> = {
   sendbotmessage,
   list,
   listadmin,
+  honey,
   ...meadtoolsCommands
 };
 
