@@ -25,6 +25,7 @@ import { sendbotmessage } from "../admin/modCommands";
 import { list, listadmin } from "./list";
 import yeastinfo from "./yeastInfo";
 import honey from "./honeyInfo";
+import { wiki } from "./wiki";
 
 // ---------- Utilities ----------
 const sanitizeName = (raw: string) =>
@@ -311,6 +312,7 @@ const builtinCommands: Record<string, Command> = {
   list,
   listadmin,
   honey,
+  wiki,
   ...meadtoolsCommands
 };
 
