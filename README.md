@@ -57,7 +57,8 @@ Ensure you have the following installed on your development machine:
     server IDs, channel IDs, and MongoDB connection string.
 
     `HONEYPOT_CHANNEL` is an enforcement channel: an ordinary human member who
-    posts there is immediately banned and a detailed incident embed is sent to
+    posts there is immediately banned, their messages from the preceding 24
+    hours are deleted, and a detailed incident embed is sent to
     `ADMIN_CHANNEL`. Bots, webhooks, the server owner, members with moderation
     permissions, and members whose roles are listed in
     `HONEYPOT_EXEMPT_ROLE_IDS` are not banned. Protected-member posts and failed

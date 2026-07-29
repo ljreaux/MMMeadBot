@@ -13,7 +13,7 @@ const makeFixture = ({
   bannable?: boolean;
   protectedMember?: boolean;
 } = {}) => {
-  const ban = mock(async () => undefined);
+  const ban = mock(async (_options: unknown) => undefined);
   const send = mock(async (_payload: unknown) => undefined);
   const fetchChannel = mock(async () => ({
     isTextBased: () => true,
@@ -100,6 +100,11 @@ describe("handleHoneypotMessage", () => {
 
     expect(handled).toBe(true);
     expect(fixture.ban).toHaveBeenCalledTimes(1);
+    expect(fixture.ban.mock.calls[0][0]).toEqual({
+      reason:
+        "Honeypot channel post by example-user (user-id); message message-id",
+      deleteMessageSeconds: 86_400,
+    });
     expect(fixture.fetchChannel).toHaveBeenCalledWith("admin-channel");
     expect(fixture.send).toHaveBeenCalledTimes(1);
 

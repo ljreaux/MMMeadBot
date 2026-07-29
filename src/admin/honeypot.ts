@@ -18,6 +18,7 @@ type HoneypotAction =
 
 const MAX_FIELD_LENGTH = 1_024;
 const MAX_BAN_REASON_LENGTH = 512;
+const HONEYPOT_DELETE_MESSAGE_SECONDS = 24 * 60 * 60;
 
 const truncate = (value: string, maxLength = MAX_FIELD_LENGTH) =>
   value.length <= maxLength
@@ -305,7 +306,10 @@ export const handleHoneypotMessage = async (
     );
 
     try {
-      await member.ban({ reason: banReason });
+      await member.ban({
+        reason: banReason,
+        deleteMessageSeconds: HONEYPOT_DELETE_MESSAGE_SECONDS,
+      });
       action = { kind: "banned" };
     } catch (error) {
       const reason = error instanceof Error ? error.message : "Unknown error";
