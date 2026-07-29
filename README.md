@@ -40,15 +40,31 @@ Ensure you have the following installed on your development machine:
 1.  Create a `.env` file in the root of the project and add the following environment variables:
 
          ```dotenv
-         token=<your-discord-bot-token>
+         TOKEN=<your-discord-bot-token>
          CLIENT_ID=<your-discord-client-id>
          GUILD_ID=<your-discord-guild-id>
          WELCOME_CHANNEL=<your-welcome-channel-id>
          BOT_SPAM_CHANNEL=<your-bot-spam-channel-id>
+         GENERAL_CHANNEL=<your-general-channel-id>
+         ADMIN_CHANNEL=<your-admin-channel-id>
+         HONEYPOT_CHANNEL=<your-honeypot-channel-id>
+         # Optional comma-separated role IDs that must never be banned:
+         HONEYPOT_EXEMPT_ROLE_IDS=<role-id>,<role-id>
          MONGO_URI=<your-mongodb-connection-string>
          ```
 
-    Replace `<your-discord-bot-token>`, `<your-discord-client-id>`, `<your-discord-guild-id>`, `<your-welcome-channel-id>`, `<your-bot-spam-channel-id>`, and `<your-mongodb-connection-string>` with your actual Discord bot token, Discord client ID, Discord guild ID, IDs for welcome channel and bot spam channel, and MongoDB connection string.
+    Replace the placeholders with your Discord bot token, application and
+    server IDs, channel IDs, and MongoDB connection string.
+
+    `HONEYPOT_CHANNEL` is an enforcement channel: an ordinary human member who
+    posts there is immediately banned and a detailed incident embed is sent to
+    `ADMIN_CHANNEL`. Bots, webhooks, the server owner, members with moderation
+    permissions, and members whose roles are listed in
+    `HONEYPOT_EXEMPT_ROLE_IDS` are not banned. Protected-member posts and failed
+    ban attempts are still reported. The bot needs **View Channel** and
+    **Read Message History** in the honeypot, **Ban Members** with a role above
+    the members it must ban, and **View Channel**, **Send Messages**, and
+    **Embed Links** in the admin channel.
 
 ### Running the Bot
 

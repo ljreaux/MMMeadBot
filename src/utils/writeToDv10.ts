@@ -2,6 +2,18 @@ import fs from "fs";
 export const dv10Url = "https://cloudinary-dv10-api.vercel.app/api/list-media";
 export const shadowHiveUrl = "https://shadowhive-api.vercel.app/api/list-media";
 
+type CloudinaryResource = {
+  secure_url: string;
+};
+
+const isCloudinaryResource = (
+  resource: unknown
+): resource is CloudinaryResource =>
+  typeof resource === "object" &&
+  resource !== null &&
+  "secure_url" in resource &&
+  typeof resource.secure_url === "string";
+
 export const fetchCloudinaryImages = async (
   backendUrl: string
 ): Promise<string[]> => {
@@ -10,12 +22,19 @@ export const fetchCloudinaryImages = async (
     if (!response.ok) {
       throw new Error(`Failed to fetch images: ${response.statusText}`);
     }
-    const data = await response.json();
-    const images = data.resources
-      .filter((resource: { secure_url: string }) => resource.secure_url)
-      .map((resource: { secure_url: string }) => resource.secure_url);
+    const data: unknown = await response.json();
+    if (
+      typeof data !== "object" ||
+      data === null ||
+      !("resources" in data) ||
+      !Array.isArray(data.resources)
+    ) {
+      throw new Error("Cloudinary response did not contain a resources array");
+    }
 
-    return images;
+    return data.resources
+      .filter(isCloudinaryResource)
+      .map((resource) => resource.secure_url);
   } catch (err) {
     console.error("Error fetching Cloudinary images:", err);
     return [];

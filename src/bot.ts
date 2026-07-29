@@ -26,6 +26,7 @@ import {
 } from "./utils/writeToDv10";
 import { reloadCommands } from "./utils/reloadCommands";
 import { yeastInfoAutocomplete } from "./commands/yeastInfo";
+import { handleHoneypotMessage } from "./admin/honeypot";
 
 const {
   TOKEN,
@@ -33,7 +34,13 @@ const {
   BOT_SPAM_CHANNEL = "",
   GENERAL_CHANNEL = "",
   ADMIN_CHANNEL = "",
+  HONEYPOT_CHANNEL = "",
+  HONEYPOT_EXEMPT_ROLE_IDS = "",
 } = process.env;
+
+const honeypotExemptRoleIds = HONEYPOT_EXEMPT_ROLE_IDS.split(",")
+  .map((roleId) => roleId.trim())
+  .filter(Boolean);
 
 // Build slash command registry on startup
 const registryPromise = buildCommandRegistry();
@@ -56,11 +63,32 @@ client.login(TOKEN);
 client.once(Events.ClientReady, async (readyClient) => {
   await dbConnect();
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+
+  if (!HONEYPOT_CHANNEL) {
+    console.warn(
+      "[honeypot] HONEYPOT_CHANNEL is not configured; honeypot enforcement is disabled"
+    );
+  } else if (!ADMIN_CHANNEL) {
+    console.error(
+      "[honeypot] ADMIN_CHANNEL is not configured; incidents cannot be reported"
+    );
+  }
+
   await reloadCommands();
 });
 
 client.on(Events.MessageCreate, async (message: Message) => {
   if (message.author.bot) return;
+
+  if (
+    await handleHoneypotMessage(message, {
+      channelId: HONEYPOT_CHANNEL,
+      adminChannelId: ADMIN_CHANNEL,
+      exemptRoleIds: honeypotExemptRoleIds,
+    })
+  ) {
+    return;
+  }
 
   handleHooligans(message);
   // prevents @everyone
